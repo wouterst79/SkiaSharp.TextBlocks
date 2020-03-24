@@ -59,9 +59,35 @@ return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));")
                             ;
 
 
+            // animated
+            var lorumshort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+            new TextBlockSampleAnimated(outputfolder, "animated", 300, 200, 15)
+
+                .Paint((canvas, pct, y) =>
+                {
+                    var text = new Text(new FLFont(14), SKColors.Black, lorumshort);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 10 + 290 * (pct * pct), 0));
+                }, "")
+
+                .Save(30);
+
+            var lorumshortrtl = "أبجد هوز دولور الجلوس امات، إيليت، سد قيام الإيقاع والحيوية، بحيث تعبا وحزنا، وبعض الأمور الهامة.";
+
+            new TextBlockSampleAnimated(outputfolder, "animated_rtl", 300, 200, 15)
+
+                .Paint((canvas, pct, y) =>
+                {
+                    var w = 10 + 290 * (pct * pct);
+                    var text = new Text(new FLFont(14), SKColors.Black, lorumshortrtl);
+                    return canvas.DrawTextBlock(text, new SKRect(299 - w, y, 299, 0), null, FlowDirection.RightToLeft);
+                }, "")
+
+                .Save(30);
+
             markdown.AppendLine(@"### Word Wrap
 ![animated](./samples/output/animated.gif)
-![animated](./samples/output/animated%20rtl.gif)
+![animated](./samples/output/animated_rtl.gif)
 ");
 
 
@@ -245,31 +271,6 @@ Curabitur pretium tincidunt lacus. Nulla gravida orci a odio.Nullam varius, turp
                 }, null)
 
                 ;
-
-            var lorumshort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-
-            new TextBlockSampleAnimated(outputfolder, "animated", 300, 200, 15)
-
-                .Paint((canvas, pct, y) =>
-                {
-                    var text = new Text(new FLFont(14), SKColors.Black, lorumshort);
-                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 10 + 290 * (pct * pct), 0));
-                }, "")
-
-                .Save(30);
-
-            var lorumshortrtl = "أبجد هوز دولور الجلوس امات، إيليت، سد قيام الإيقاع والحيوية، بحيث تعبا وحزنا، وبعض الأمور الهامة.";
-
-            new TextBlockSampleAnimated(outputfolder, "animated rtl", 300, 200, 15)
-
-                .Paint((canvas, pct, y) =>
-                {
-                    var w = 10 + 290 * (pct * pct);
-                    var text = new Text(new FLFont(14), SKColors.Black, lorumshortrtl);
-                    return canvas.DrawTextBlock(text, new SKRect(299 - w, y, 299, 0), null, FlowDirection.RightToLeft);
-                }, "")
-
-                .Save(30);
 
 
             var mdpath = Path.Combine(outputfolder, "README.mddraft");

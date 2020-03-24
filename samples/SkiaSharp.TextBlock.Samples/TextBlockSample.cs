@@ -29,6 +29,7 @@ namespace SkiaSharp.TextBlock.Samples
         {
 
             var filename = string.IsNullOrEmpty(name) ? Section : $"{Section} - {name}";
+            filename = filename.Replace(" ", "_");
             var FullFilename = Path.Combine(Folder, $"{filename}.png");
 
             // delete existing
@@ -80,7 +81,7 @@ namespace SkiaSharp.TextBlock.Samples
             // Markdown
             if (!string.IsNullOrEmpty(name))
                 Markdown.AppendLine($"### {name}:");
-            Markdown.AppendLine($@"![{filename}](./samples/output/{filename.Replace(" ", "%20")}.png)");
+            Markdown.AppendLine($@"![{filename}](./samples/output/{filename}.png)");
             if (!string.IsNullOrEmpty(code))
                 Markdown.AppendLine(@$"```C#
 {code}
