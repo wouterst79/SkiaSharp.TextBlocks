@@ -21,7 +21,7 @@ namespace SkiaSharp.TextBlock.Samples
 
 
             // basic samples
-            new TextBlockSample(outputfolder, "basic samples", markdown)
+            new TextBlockSample(outputfolder, "Basic Samples", markdown)
 
                 .Paint("Hello World", 200, (canvas) =>
                 {
@@ -59,14 +59,14 @@ return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));")
                             ;
 
 
-            markdown.AppendLine(@"### word wrap
+            markdown.AppendLine(@"### Word Wrap
 ![animated](./samples/output/animated.gif)
 ![animated](./samples/output/animated%20rtl.gif)
 ");
 
 
             // basic samples 2
-            new TextBlockSample(outputfolder, "basic samples 2", markdown)
+            new TextBlockSample(outputfolder, "Basic Samples 2", markdown)
 
                 .Paint("Word Wrap - Tight", 200, (canvas) =>
                 {
@@ -119,16 +119,16 @@ return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));")
 
 
             // font detection
-            new TextBlockSample(outputfolder, "typeface detection", markdown)
+            new TextBlockSample(outputfolder, "Typeface Detection", markdown)
 
-                .Paint("Typeface Detection - Non-latin", 200, (canvas) =>
+                .Paint("Non-latin", 200, (canvas) =>
                 {
                     var text = new Text(new FLFont(14), SKColors.Black, "年");
                     return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
                 }, @"var text = new Text(new FLFont(14), SKColors.Black, ""年"");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
-                .Paint("Typeface Detection - Symbols", 200, (canvas) =>
+                .Paint("Symbols", 200, (canvas) =>
                 {
                     var text = new Text(new FLFont(14), SKColors.Black, "↺");
                     return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
@@ -160,9 +160,9 @@ return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection
 
 
             // rich text samples
-            new TextBlockSample(outputfolder, "rich text", markdown)
+            new TextBlockSample(outputfolder, "Rich Text", markdown)
 
-                .Paint("Rich Text", 200, (canvas) =>
+                .Paint("Shorter", 200, (canvas) =>
                 {
                     var text = new RichText()
                     {
@@ -184,14 +184,9 @@ return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection
     }
 };
 return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
-");
+")
 
-                ;
-
-            // rich text 2
-            new TextBlockSample(outputfolder, "rich text 2", markdown)
-
-                .Paint("rich text 2", 200, (canvas) =>
+                .Paint("Longer", 200, (canvas) =>
                 {
                     var text = new RichText()
                     {
@@ -240,10 +235,10 @@ return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));")
 Curabitur pretium tincidunt lacus. Nulla gravida orci a odio.Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.Integer in mauris eu nibh euismod gravida.Duis ac tellus et risus vulputate vehicula.Donec lobortis risus a elit.Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam.Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi.Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat.Cras mollis scelerisque nunc. Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci.In hac habitasse platea dictumst.;
 ";
 
-            // font detection
-            new TextBlockSample(outputfolder, "lorum ipsum", markdown)
+            // lorum ipsum
+            new TextBlockSample(outputfolder, "Lorum ipsum", markdown)
 
-                .Paint("lorum ipsum", 200, (canvas) =>
+                .Paint(null, 401, (canvas) =>
                 {
                     var text = new Text(new FLFont(14), SKColors.Black, lorum);
                     return canvas.DrawTextBlock(text, new SKRect(0, 0, 400, 0));

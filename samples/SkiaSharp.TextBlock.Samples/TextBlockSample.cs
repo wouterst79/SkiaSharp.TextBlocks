@@ -21,14 +21,14 @@ namespace SkiaSharp.TextBlock.Samples
             Section = section;
 
             Markdown = markdown;
-            Markdown.AppendLine($"### {section}");
+            Markdown.AppendLine($"## {section}");
 
         }
 
         public TextBlockSample Paint(string name, int width, Func<SKCanvas, SKRect> drawsample, string code)
         {
 
-            var filename = $"{Section}-{name}";
+            var filename = string.IsNullOrEmpty(name) ? Section : $"{Section} - {name}";
             var FullFilename = Path.Combine(Folder, $"{filename}.png");
 
             // delete existing
@@ -53,9 +53,9 @@ namespace SkiaSharp.TextBlock.Samples
 
                 var y = rect.Bottom;
 
-                // description below the sample
-                rect = canvas.DrawTextBlock(name, new SKRect(0, y, width, 0), new FLFont(10), SKColors.DarkGray);
-                y = rect.Bottom;
+                //// description below the sample
+                //rect = canvas.DrawTextBlock(name, new SKRect(0, y, width, 0), new FLFont(10), SKColors.DarkGray);
+                //y = rect.Bottom;
 
 
 
@@ -78,6 +78,8 @@ namespace SkiaSharp.TextBlock.Samples
             }
 
             // Markdown
+            if (!string.IsNullOrEmpty(name))
+                Markdown.AppendLine($"### {name}:");
             Markdown.AppendLine($@"![{filename}](./samples/output/{filename.Replace(" ", "%20")}.png)");
             if (!string.IsNullOrEmpty(code))
                 Markdown.AppendLine(@$"```C#
