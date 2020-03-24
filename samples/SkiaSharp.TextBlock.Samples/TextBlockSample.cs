@@ -52,7 +52,7 @@ namespace SkiaSharp.TextBlock.Samples
                 using (var rectpaint = new SKPaint() { Color = SKColors.DarkGreen.WithAlpha(64), IsStroke = true })
                     canvas.DrawRect(rect, rectpaint);
 
-                var y = rect.Bottom;
+                var y = rect.Bottom + 1;
 
                 //// description below the sample
                 //rect = canvas.DrawTextBlock(name, new SKRect(0, y, width, 0), new FLFont(10), SKColors.DarkGray);
