@@ -1,9 +1,3 @@
-# SkiaSharp.TextBlock
-SkiaSharp.TextBlock adds text block and rich text layout to SkiaSharp 
-
-## Sample uses:
-NOTE: DrawTextBlock returns the SKRect that contains the text. The sample project draws a green box around this rect. See the [source](./samples) for details.
-
 ### basic samples
 ![basic samples-Hello World](./samples/output/basic%20samples-Hello%20World.png)
 ```C#

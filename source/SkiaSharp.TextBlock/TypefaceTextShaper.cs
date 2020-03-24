@@ -50,7 +50,7 @@ namespace SkiaSharp.TextBlock
         {
 
             if (string.IsNullOrEmpty(text))
-                return new GlyphSpan();
+                return new GlyphSpan(paint);
 
             // get the sizes
             float scaley = paint.TextSize / FONT_SIZE_SCALE;

@@ -51,8 +51,9 @@ namespace SkiaSharp.TextBlock
         /// </summary>
         public readonly int WordCount;
 
-        public GlyphSpan()
+        public GlyphSpan(SKPaint paint)
         {
+            Paint = paint;
             Codepoints = new byte[0];
             StartPoints = new SKPoint[0];
             Words = new (int, int, WordType)[0];

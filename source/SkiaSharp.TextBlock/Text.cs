@@ -9,12 +9,12 @@ using System.Collections.Generic;
 namespace SkiaSharp.TextBlock
 {
 
-    public class TextBlock
+    public class Text
     {
 
         public readonly FLFont Font;
         public readonly SKColor Color;
-        public readonly string Text;
+        public readonly string Contents;
 
         public readonly LineBreakMode LineBreakMode = LineBreakMode.WordWrap;
         public int MaxLines = int.MaxValue;
@@ -53,14 +53,14 @@ namespace SkiaSharp.TextBlock
 
 
 
-        public TextBlock(FLFont font, SKColor color, string text)
+        public Text(FLFont font, SKColor color, string text)
         {
             Font = font;
             Color = color;
-            Text = text ?? "";
+            Contents = text ?? "";
         }
 
-        public TextBlock(FLFont font, SKColor color, string text, LineBreakMode lineBreakMode) : this(font, color, text)
+        public Text(FLFont font, SKColor color, string text, LineBreakMode lineBreakMode) : this(font, color, text)
         {
             LineBreakMode = lineBreakMode;
         }
@@ -191,7 +191,7 @@ namespace SkiaSharp.TextBlock
             if (GlyphSpan == null)
             {
 
-                GlyphSpan = textShaper.GetGlyphSpan(Font, Text);
+                GlyphSpan = textShaper.GetGlyphSpan(Font, Contents);
 
                 var fontMetrics = GlyphSpan.Paint.FontMetrics;
                 FontHeight = fontMetrics.CapHeight;

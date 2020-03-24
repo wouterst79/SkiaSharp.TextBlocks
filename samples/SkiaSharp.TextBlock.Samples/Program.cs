@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace SkiaSharp.TextBlock.Samples
 {
@@ -16,164 +17,222 @@ namespace SkiaSharp.TextBlock.Samples
             Directory.CreateDirectory(outputfolder);
 
 
-            // basic samples
-            new TextBlockSample(outputfolder, "basic samples", 200)
+            var markdown = new StringBuilder();
 
-                .Paint((canvas, y) =>
+
+            // basic samples
+            new TextBlockSample(outputfolder, "basic samples", markdown)
+
+                .Paint("Hello World", 200, (canvas) =>
                 {
-                    return canvas.DrawTextBlock("Hello world!", new SKRect(0, y, 100, 0), new FLFont(14), SKColors.Black);
+                    return canvas.DrawTextBlock("Hello world!", new SKRect(0, 0, 100, 0), new FLFont(14), SKColors.Black);
                 }, "canvas.DrawTextBlock(\"Hello world!\", new SKRect(0, 0, 100, 0), new FLFont(14), SKColors.Black);")
 
-                .Paint((canvas, y) =>
+                .Paint("FlowDirection.RightToLeft", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "Hello world!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0), null, FlowDirection.RightToLeft);
-                }, "FlowDirection.RightToLeft")
+                    var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""Hello world!"");
+canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);")
 
-                .Paint((canvas, y) =>
+                .Paint("Word Wrap", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "Hello world!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 50, 0));
-                }, "Word Wrap")
+                    var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""Hello world!"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("LineBreakMode.Center", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.Center);
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 50, 0));
-                }, "LineBreakMode.Center (Width=50)")
+                    var text = new Text(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.Center);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""Hello world!"", LineBreakMode.Center);
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("LineBreakMode.MiddleTruncation", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.MiddleTruncation);
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 50, 0));
-                }, "LineBreakMode.MiddleTruncation (Width=50)")
+                    var text = new Text(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.MiddleTruncation);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""Hello world!"", LineBreakMode.MiddleTruncation);
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));")
 
-                .Save();
+                            ;
 
+
+            markdown.AppendLine(@"### word wrap
+![animated](./samples/output/animated.gif)
+![animated](./samples/output/animated%20rtl.gif)
+");
 
 
             // basic samples 2
-            new TextBlockSample(outputfolder, "basic samples 2", 200)
+            new TextBlockSample(outputfolder, "basic samples 2", markdown)
 
-                .Paint((canvas, y) =>
+                .Paint("Word Wrap - Tight", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "Hello world!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 20, 0));
-                }, "Word wrap, smaller")
+                    var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 20, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""Hello world!"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 20, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("Courier New", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont("Courier New", 14), SKColors.Black, "Hello world!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0));
-                }, "Courier New")
+                    var text = new Text(new FLFont("Courier New", 14), SKColors.Black, "Hello world!");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new Text(new FLFont(""Courier New"", 14), SKColors.Black, ""Hello world!"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("Color and Size", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(20), SKColors.Red, "Hello world!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0));
-                }, "Color and Size")
+                    var text = new Text(new FLFont(20), SKColors.Red, "Hello world!");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new Text(new FLFont(20), SKColors.Red, ""Hello world!"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0)); ")
 
-                .Paint((canvas, y) =>
+                .Paint("New line", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, @"
+                    var text = new Text(new FLFont(14), SKColors.Black, @"
 (leading) new-line support...
 
 Hello World!
 SkiaSharp Rocks!");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 150, 0));
-                }, "New line support")
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, @""
+(leading) new- line support...
 
-                .Paint((canvas, y) =>
+Hello World!
+SkiaSharp Rocks!"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));")
+
+                .Paint("New Line - Trailing", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, @"Trailing new-line support:
+                    var text = new Text(new FLFont(14), SKColors.Black, @"Trailing new-line support:
 
 ");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 150, 0));
-                }, "trailing new line support")
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, @""Trailing new- line support:
 
-                .Save();
+"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));")
+
+                ;
 
 
             // font detection
-            new TextBlockSample(outputfolder, "font detection", 200)
+            new TextBlockSample(outputfolder, "typeface detection", markdown)
 
-                .Paint((canvas, y) =>
+                .Paint("Typeface Detection - Non-latin", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "年");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0));
-                }, "font detection - non-latin")
+                    var text = new Text(new FLFont(14), SKColors.Black, "年");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""年"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
-                .Paint((canvas, y) =>
-                 {
-                     var text = new TextBlock(new FLFont(14), SKColors.Black, "↺");
-                     return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0));
-                 }, "font detection - symbols")
-
-                .Paint((canvas, y) =>
+                .Paint("Typeface Detection - Symbols", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "🌐🍪🍕🚀");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0));
-                }, "unicode support")
+                    var text = new Text(new FLFont(14), SKColors.Black, "↺");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""↺"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("Unicode", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 100, 0), null, FlowDirection.RightToLeft);
-                }, "rtl support")
+                    var text = new Text(new FLFont(14), SKColors.Black, "🌐🍪🍕🚀");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""🌐🍪🍕🚀"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
-                .Paint((canvas, y) =>
+                .Paint("Rtl Support", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
-                    return canvas.DrawTextBlock(text, new SKRect(50, y, 100, 0), null, FlowDirection.RightToLeft);
-                }, "rtl word wrap")
+                    var text = new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""مرحبا بالعالم"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);")
 
-                .Save();
+                .Paint("Rtl Word Wrap", 200, (canvas) =>
+                {
+                    var text = new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
+                    return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection.RightToLeft);
+                }, @"var text = new Text(new FLFont(14), SKColors.Black, ""مرحبا بالعالم"");
+return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection.RightToLeft);")
+
+                ;
 
 
             // rich text samples
-            new TextBlockSample(outputfolder, "rich text", 200)
+            new TextBlockSample(outputfolder, "rich text", markdown)
 
-                .Paint((canvas, y) =>
+                .Paint("Rich Text", 200, (canvas) =>
                 {
-                    var text = new RichTextBlock()
+                    var text = new RichText()
                     {
                         Spans =
                         {
-                            new TextBlock(new FLFont(10), SKColors.Black, "Hello "),
-                            new TextBlock(new FLFont(20, true), SKColors.Black, "world! "),
-                            new TextBlock(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+                            new Text(new FLFont(10), SKColors.Black, "Hello "),
+                            new Text(new FLFont(20, true), SKColors.Black, "world! "),
+                            new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
                         }
                     };
                     return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
-                }, "rich text")
+                }, @"var text = new RichText()
+{
+    Spans =
+    {
+        new Text(new FLFont(10), SKColors.Black, ""Hello ""),
+        new Text(new FLFont(20, true), SKColors.Black, ""world! ""),
+        new Text(new FLFont(16), SKColors.Green, ""SkiaSharp Rocks!""),
+    }
+};
+return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
+");
 
-                .Save();
+                ;
 
             // rich text 2
-            new TextBlockSample(outputfolder, "rich text 2", 200)
+            new TextBlockSample(outputfolder, "rich text 2", markdown)
 
-                .Paint((canvas, y) =>
+                .Paint("rich text 2", 200, (canvas) =>
                 {
-                    var text = new RichTextBlock()
+                    var text = new RichText()
                     {
                         Spans =
                         {
-                            new TextBlock(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new FLFont(10), SKColors.Black, "Hello "),
-                            new TextBlock(new FLFont(20, true), SKColors.Black, "world! "),
-                            new TextBlock(new FLFont(14), SKColors.Black, @"Trailing new-line support:
+                            new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+                            new Text(new FLFont(10), SKColors.Black, "Hello "),
+                            new Text(new FLFont(20, true), SKColors.Black, "world! "),
+                            new Text(new FLFont(14), SKColors.Black, @"Trailing new-line support:
 
 "),
-                            new TextBlock(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new FLFont(14), SKColors.Black, "مرحبا بالعالم"),
-                            new TextBlock(new FLFont(14), SKColors.Black, "年"),
-                            new TextBlock(new FLFont(14), SKColors.Black, "↺"),
+                            new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+                            new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم"),
+                            new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+                            new Text(new FLFont(14), SKColors.Black, "年"),
+                            new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+                            new Text(new FLFont(14), SKColors.Black, "↺"),
                         }
                     };
                     return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
-                }, "rich text 2")
+                }, @"var text = new RichText()
+{
+    Spans =
+    {
+        new Text(new FLFont(16), SKColors.Green, ""SkiaSharp Rocks!""),
+        new Text(new FLFont(10), SKColors.Black, ""Hello ""),
+        new Text(new FLFont(20, true), SKColors.Black, ""world! ""),
+        new Text(new FLFont(14), SKColors.Black, @""Trailing new-line support:
 
-                .Save();
+""),
+        new Text(new FLFont(16), SKColors.Green, ""SkiaSharp Rocks!""),
+        new Text(new FLFont(14), SKColors.Black, ""مرحبا بالعالم""),
+        new Text(new FLFont(16), SKColors.Green, ""SkiaSharp Rocks!""),
+        new Text(new FLFont(14), SKColors.Black, ""年""),
+        new Text(new FLFont(16), SKColors.Green, ""SkiaSharp Rocks!""),
+        new Text(new FLFont(14), SKColors.Black, ""↺""),
+    }
+};
+return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));")
+
+                ;
 
 
             var lorum = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -182,17 +241,44 @@ Curabitur pretium tincidunt lacus. Nulla gravida orci a odio.Nullam varius, turp
 ";
 
             // font detection
-            new TextBlockSample(outputfolder, "lorum ipsum", 400)
+            new TextBlockSample(outputfolder, "lorum ipsum", markdown)
 
-                .Paint((canvas, y) =>
+                .Paint("lorum ipsum", 200, (canvas) =>
                 {
-                    var text = new TextBlock(new FLFont(14), SKColors.Black, lorum);
-                    return canvas.DrawTextBlock(text, new SKRect(0, y, 400, 0));
-                }, "lorum ipsum")
+                    var text = new Text(new FLFont(14), SKColors.Black, lorum);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 400, 0));
+                }, null)
 
-                .Save();
+                ;
+
+            var lorumshort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+            new TextBlockSampleAnimated(outputfolder, "animated", 300, 200, 15)
+
+                .Paint((canvas, pct, y) =>
+                {
+                    var text = new Text(new FLFont(14), SKColors.Black, lorumshort);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 10 + 290 * (pct * pct), 0));
+                }, "")
+
+                .Save(30);
+
+            var lorumshortrtl = "أبجد هوز دولور الجلوس امات، إيليت، سد قيام الإيقاع والحيوية، بحيث تعبا وحزنا، وبعض الأمور الهامة.";
+
+            new TextBlockSampleAnimated(outputfolder, "animated rtl", 300, 200, 15)
+
+                .Paint((canvas, pct, y) =>
+                {
+                    var w = 10 + 290 * (pct * pct);
+                    var text = new Text(new FLFont(14), SKColors.Black, lorumshortrtl);
+                    return canvas.DrawTextBlock(text, new SKRect(299 - w, y, 299, 0), null, FlowDirection.RightToLeft);
+                }, "")
+
+                .Save(30);
 
 
+            var mdpath = Path.Combine(outputfolder, "README.mddraft");
+            File.WriteAllText(mdpath, markdown.ToString());
 
             // open the output folder
             Process.Start(new ProcessStartInfo() { FileName = outputfolder, UseShellExecute = true });

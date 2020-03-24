@@ -12,7 +12,7 @@ using System.Text;
 namespace SkiaSharp.TextBlock
 {
 
-    public class RichTextBlock 
+    public class RichText 
     {
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace SkiaSharp.TextBlock
         /// <summary>
         /// The contents of the rich text block
         /// </summary>
-        public List<TextBlock> Spans = new List<TextBlock>();
+        public List<Text> Spans = new List<Text>();
 
 
         private const float floatroundingmargin = 0.01f;
@@ -58,7 +58,7 @@ namespace SkiaSharp.TextBlock
 
             var width = rect.Width;
 
-            var line = new List<(TextBlock text, MeasuredSpan wordspan)>();
+            var line = new List<(Text text, MeasuredSpan wordspan)>();
             var linewidth = 0.0f;
 
             var linefontheight = 0f;
