@@ -1,4 +1,4 @@
-﻿namespace SkiaSharp.TextBlock
+﻿namespace SkiaSharp.TextBlocks
 {
     public struct MeasuredSpan
     {

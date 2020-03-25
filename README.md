@@ -9,14 +9,14 @@ Hello World:
 
 ![Basic_Samples-Hello_World](./samples/output/Basic_Samples-Hello_World.png)
 ```C#
-canvas.DrawTextBlock("Hello world!", new SKRect(0, 0, 100, 0), new FLFont(14), SKColors.Black);
+canvas.DrawTextBlock("Hello world!", new SKRect(0, 0, 100, 0), new Font(14), SKColors.Black);
 ```
 
 FlowDirection.RightToLeft:
 
 ![Basic_Samples-FlowDirection.RightToLeft](./samples/output/Basic_Samples-FlowDirection.RightToLeft.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+var text = new TextBlock(new Font(14), SKColors.Black, "Hello world!");
 canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
 ```
 
@@ -24,7 +24,7 @@ Word Wrap:
 
 ![Basic_Samples-Word_Wrap](./samples/output/Basic_Samples-Word_Wrap.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+var text = new TextBlock(new Font(14), SKColors.Black, "Hello world!");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
 ```
 
@@ -32,7 +32,7 @@ LineBreakMode.Center:
 
 ![Basic_Samples-LineBreakMode.Center](./samples/output/Basic_Samples-LineBreakMode.Center.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.Center);
+var text = new TextBlock(new Font(14), SKColors.Black, "Hello world!", LineBreakMode.Center);
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
 ```
 
@@ -40,7 +40,7 @@ LineBreakMode.MiddleTruncation:
 
 ![Basic_Samples-LineBreakMode.MiddleTruncation](./samples/output/Basic_Samples-LineBreakMode.MiddleTruncation.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "Hello world!", LineBreakMode.MiddleTruncation);
+var text = new TextBlock(new Font(14), SKColors.Black, "Hello world!", LineBreakMode.MiddleTruncation);
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 50, 0));
 ```
 
@@ -53,7 +53,7 @@ Word Wrap - Tight:
 
 ![Basic_Samples_2-Word_Wrap_-_Tight](./samples/output/Basic_Samples_2-Word_Wrap_-_Tight.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "Hello world!");
+var text = new TextBlock(new Font(14), SKColors.Black, "Hello world!");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 20, 0));
 ```
 
@@ -61,7 +61,7 @@ Courier New:
 
 ![Basic_Samples_2-Courier_New](./samples/output/Basic_Samples_2-Courier_New.png)
 ```C#
-var text = new Text(new FLFont("Courier New", 14), SKColors.Black, "Hello world!");
+var text = new TextBlock(new Font("Courier New", 14), SKColors.Black, "Hello world!");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
 ```
 
@@ -69,7 +69,7 @@ Color and Size:
 
 ![Basic_Samples_2-Color_and_Size](./samples/output/Basic_Samples_2-Color_and_Size.png)
 ```C#
-var text = new Text(new FLFont(20), SKColors.Red, "Hello world!");
+var text = new TextBlock(new Font(20), SKColors.Red, "Hello world!");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0)); 
 ```
 
@@ -77,7 +77,7 @@ New line:
 
 ![Basic_Samples_2-New_line](./samples/output/Basic_Samples_2-New_line.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, @"
+var text = new TextBlock(new Font(14), SKColors.Black, @"
 (leading) new- line support...
 
 Hello World!
@@ -89,7 +89,7 @@ New Line - Trailing:
 
 ![Basic_Samples_2-New_Line_-_Trailing](./samples/output/Basic_Samples_2-New_Line_-_Trailing.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, @"Trailing new- line support:
+var text = new TextBlock(new Font(14), SKColors.Black, @"Trailing new- line support:
 
 ");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));
@@ -100,7 +100,7 @@ Non-latin:
 
 ![Typeface_Detection-Non-latin](./samples/output/Typeface_Detection-Non-latin.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "年");
+var text = new TextBlock(new Font(14), SKColors.Black, "年");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
 ```
 
@@ -108,7 +108,7 @@ Symbols:
 
 ![Typeface_Detection-Symbols](./samples/output/Typeface_Detection-Symbols.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "↺");
+var text = new TextBlock(new Font(14), SKColors.Black, "↺");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
 ```
 
@@ -116,7 +116,7 @@ Unicode:
 
 ![Typeface_Detection-Unicode](./samples/output/Typeface_Detection-Unicode.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "🌐🍪🍕🚀");
+var text = new TextBlock(new Font(14), SKColors.Black, "🌐🍪🍕🚀");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
 ```
 
@@ -124,7 +124,7 @@ Rtl Support:
 
 ![Typeface_Detection-Rtl_Support](./samples/output/Typeface_Detection-Rtl_Support.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
+var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
 ```
 
@@ -132,7 +132,7 @@ Rtl Word Wrap:
 
 ![Typeface_Detection-Rtl_Word_Wrap](./samples/output/Typeface_Detection-Rtl_Word_Wrap.png)
 ```C#
-var text = new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم");
+var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");
 return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection.RightToLeft);
 ```
 
@@ -141,13 +141,13 @@ Shorter:
 
 ![Rich_Text-Shorter](./samples/output/Rich_Text-Shorter.png)
 ```C#
-var text = new RichText()
+var text = new RichTextBlock()
 {
     Spans =
     {
-        new Text(new FLFont(10), SKColors.Black, "Hello "),
-        new Text(new FLFont(20, true), SKColors.Black, "world! "),
-        new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
+        new TextBlock(new Font(10), SKColors.Black, "Hello "),
+        new TextBlock(new Font(20, true), SKColors.Black, "world! "),
+        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
     }
 };
 return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
@@ -158,22 +158,22 @@ Longer:
 
 ![Rich_Text-Longer](./samples/output/Rich_Text-Longer.png)
 ```C#
-var text = new RichText()
+var text = new RichTextBlock()
 {
     Spans =
     {
-        new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-        new Text(new FLFont(10), SKColors.Black, "Hello "),
-        new Text(new FLFont(20, true), SKColors.Black, "world! "),
-        new Text(new FLFont(14), SKColors.Black, @"Trailing new-line support:
+        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+        new TextBlock(new Font(10), SKColors.Black, "Hello "),
+        new TextBlock(new Font(20, true), SKColors.Black, "world! "),
+        new TextBlock(new Font(14), SKColors.Black, @"Trailing new-line support:
 
 "),
-        new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-        new Text(new FLFont(14), SKColors.Black, "مرحبا بالعالم"),
-        new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-        new Text(new FLFont(14), SKColors.Black, "年"),
-        new Text(new FLFont(16), SKColors.Green, "SkiaSharp Rocks!"),
-        new Text(new FLFont(14), SKColors.Black, "↺"),
+        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+        new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم"),
+        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+        new TextBlock(new Font(14), SKColors.Black, "年"),
+        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+        new TextBlock(new Font(14), SKColors.Black, "↺"),
     }
 };
 return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));

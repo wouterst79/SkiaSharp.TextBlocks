@@ -1,11 +1,11 @@
 ﻿using SkiaSharp;
-using SkiaSharp.TextBlock.Enum;
+using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
 
@@ -33,7 +33,7 @@ namespace SkiaSharp.TextBlock
 
         public Dictionary<char, SKTypeface> TypefaceCache;
         public Dictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
-        public Dictionary<(FLFont font, string text), GlyphSpan> GlyphSpanCache;
+        public Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
 
         /// <summary>
         /// Create a new Text Shaper
@@ -45,7 +45,7 @@ namespace SkiaSharp.TextBlock
             {
                 TypefaceCache = new Dictionary<char, SKTypeface>();
                 TypeShaperCache = new Dictionary<SKTypeface, TypefaceTextShaper>();
-                GlyphSpanCache = new Dictionary<(FLFont font, string text), GlyphSpan>();
+                GlyphSpanCache = new Dictionary<(Font font, string text), GlyphSpan>();
             }
         }
 
@@ -66,7 +66,7 @@ namespace SkiaSharp.TextBlock
         /// <summary>
         /// Produces a glyph span for provided font and text
         /// </summary>
-        public GlyphSpan GetGlyphSpan(FLFont font, string text)
+        public GlyphSpan GetGlyphSpan(Font font, string text)
         {
 
             if (GlyphSpanCache == null || !GlyphSpanCache.TryGetValue((font, text), out var shape))
@@ -96,7 +96,7 @@ namespace SkiaSharp.TextBlock
 
 
 
-        private SKTypeface GetTypeface(FLFont font, string text)
+        private SKTypeface GetTypeface(Font font, string text)
         {
 
             // no cache

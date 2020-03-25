@@ -4,7 +4,7 @@ using System.Text;
 
 // https://github.com/mono/SkiaSharp/blob/5e8dc3e2c9e72f2ad0d9feecefbef503ca9fcc15/source/SkiaSharp.Views/SkiaSharp.Views.Shared/Extensions.cs
 
-namespace SkiaSharp.TextBlock.Samples
+namespace SkiaSharp.TextBlocks.Samples
 {
     public static class SkiaExtensions
     {

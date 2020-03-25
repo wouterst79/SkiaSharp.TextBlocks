@@ -2,19 +2,19 @@
 //#define DEBUGCONTAINER
 #endif
 using SkiaSharp;
-using SkiaSharp.TextBlock.Enum;
+using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
-    public class Text
+    public class TextBlock
     {
 
-        public readonly FLFont Font;
+        public readonly Font Font;
         public readonly SKColor Color;
-        public readonly string Contents;
+        public readonly string Text;
 
         public readonly LineBreakMode LineBreakMode = LineBreakMode.WordWrap;
         public int MaxLines = int.MaxValue;
@@ -53,14 +53,14 @@ namespace SkiaSharp.TextBlock
 
 
 
-        public Text(FLFont font, SKColor color, string text)
+        public TextBlock(Font font, SKColor color, string text)
         {
             Font = font;
             Color = color;
-            Contents = text ?? "";
+            Text = text ?? "";
         }
 
-        public Text(FLFont font, SKColor color, string text, LineBreakMode lineBreakMode) : this(font, color, text)
+        public TextBlock(Font font, SKColor color, string text, LineBreakMode lineBreakMode) : this(font, color, text)
         {
             LineBreakMode = lineBreakMode;
         }
@@ -191,7 +191,7 @@ namespace SkiaSharp.TextBlock
             if (GlyphSpan == null)
             {
 
-                GlyphSpan = textShaper.GetGlyphSpan(Font, Contents);
+                GlyphSpan = textShaper.GetGlyphSpan(Font, Text);
 
                 var fontMetrics = GlyphSpan.Paint.FontMetrics;
                 FontHeight = fontMetrics.CapHeight;

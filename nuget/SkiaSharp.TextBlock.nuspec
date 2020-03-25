@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>SkiaSharp.TextBlock</id>
+    <version>1.0.0-alpha</version>
+    <title>SkiaSharp.TextBlock</title>
+    <authors>Wouter Steenbergen</authors>
+    <owners>Wouter Steenbergen</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/wouterst79/SkiaSharp.TextBlock</projectUrl>
+    <description>SkiaSharp.TextBlock adds text block and rich text layout to SkiaSharp </description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <tags>xamarin label text rich text rtl righttoleft ios android linux windows uwp tvos watchos macos tizen cross-platform skiasharp</tags>
+
+    <dependencies>
+      <dependency id="SkiaSharp" version="1.0.0" />
+      <dependency id="SkiaSharp.HarfBuzz" version="1.0.0" />
+    </dependencies>
+
+  </metadata>
+</package>

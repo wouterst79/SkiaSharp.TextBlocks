@@ -1,9 +1,9 @@
-﻿using SkiaSharp.TextBlock.Enum;
+﻿using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
     public static class CanvasExtensions
     {
@@ -41,9 +41,9 @@ namespace SkiaSharp.TextBlock
         /// <summary>
         /// Draw a text block 
         /// </summary>
-        public static SKRect DrawTextBlock(this SKCanvas canvas, string text, SKRect rect, FLFont font, SKColor color, TextShaper textShaper = null)
+        public static SKRect DrawTextBlock(this SKCanvas canvas, string text, SKRect rect, Font font, SKColor color, TextShaper textShaper = null)
         {
-            var textblock = new Text(font, color, text);
+            var textblock = new TextBlock(font, color, text);
             return DrawTextBlock(canvas, textblock, rect, textShaper);
         }
 
@@ -51,7 +51,7 @@ namespace SkiaSharp.TextBlock
         /// Draw a block of text on the canvas.
         /// </summary>
         /// <returns>The bounds of the painted text. Note that the returned rectangle's Width is equal to the input (IE only bottom is calculated). Use TextBlock.Measure to get text bounds</returns>
-        public static SKRect DrawTextBlock(this SKCanvas canvas, Text text, SKRect rect, TextShaper textShaper = null, FlowDirection flowDirection = FlowDirection.LeftToRight)
+        public static SKRect DrawTextBlock(this SKCanvas canvas, TextBlock text, SKRect rect, TextShaper textShaper = null, FlowDirection flowDirection = FlowDirection.LeftToRight)
         {
             return text.Draw(canvas, rect, textShaper, flowDirection);
         }
@@ -60,7 +60,7 @@ namespace SkiaSharp.TextBlock
         /// Draw a block of text on the canvas.
         /// </summary>
         /// <returns>The bounds of the painted text. Note that the returned rectangle's Width is equal to the input (IE only bottom is calculated). Use TextBlock.Measure to get text bounds</returns>
-        public static SKRect DrawRichTextBlock(this SKCanvas canvas, RichText text, SKRect rect, TextShaper textShaper = null, FlowDirection flowDirection = FlowDirection.LeftToRight)
+        public static SKRect DrawRichTextBlock(this SKCanvas canvas, RichTextBlock text, SKRect rect, TextShaper textShaper = null, FlowDirection flowDirection = FlowDirection.LeftToRight)
         {
             return text.Paint(canvas, rect, flowDirection, textShaper);
         }

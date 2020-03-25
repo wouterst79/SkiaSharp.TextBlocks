@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\source\SkiaSharp.TextBlock\SkiaSharp.TextBlock.csproj" />
+    <ProjectReference Include="..\..\source\SkiaSharp.TextBlocks\SkiaSharp.TextBlocks.csproj" />
   </ItemGroup>
 
 </Project>

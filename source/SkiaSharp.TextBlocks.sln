@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharp.TextBlock", "SkiaSharp.TextBlock\SkiaSharp.TextBlock.csproj", "{88926A22-658C-4FAF-BC4C-6311F727BFC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharp.TextBlocks", "SkiaSharp.TextBlocks\SkiaSharp.TextBlocks.csproj", "{A6C03004-3378-4F48-902E-D161E7EEF4B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{88926A22-658C-4FAF-BC4C-6311F727BFC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88926A22-658C-4FAF-BC4C-6311F727BFC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88926A22-658C-4FAF-BC4C-6311F727BFC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88926A22-658C-4FAF-BC4C-6311F727BFC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C03004-3378-4F48-902E-D161E7EEF4B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C03004-3378-4F48-902E-D161E7EEF4B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C03004-3378-4F48-902E-D161E7EEF4B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C03004-3378-4F48-902E-D161E7EEF4B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

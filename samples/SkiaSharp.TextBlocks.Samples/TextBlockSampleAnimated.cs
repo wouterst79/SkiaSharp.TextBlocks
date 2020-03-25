@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace SkiaSharp.TextBlock.Samples
+namespace SkiaSharp.TextBlocks.Samples
 {
 
     public class TextBlockSampleAnimated
@@ -71,7 +71,7 @@ namespace SkiaSharp.TextBlock.Samples
             Y = rect.Bottom;
 
             // description below the sample
-            rect = canvas.DrawTextBlock(description, new SKRect(0, Y, Width, 0), new FLFont(10), SKColors.DarkGray);
+            rect = canvas.DrawTextBlock(description, new SKRect(0, Y, Width, 0), new Font(10), SKColors.DarkGray);
 
             Y = rect.Bottom + 10;
 

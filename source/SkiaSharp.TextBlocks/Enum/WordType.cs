@@ -1,4 +1,4 @@
-﻿namespace SkiaSharp.TextBlock.Enum
+﻿namespace SkiaSharp.TextBlocks.Enum
 {
     public enum WordType
     {

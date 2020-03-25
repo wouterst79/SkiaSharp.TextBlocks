@@ -2,17 +2,17 @@
 //#define DEBUGCONTAINER
 #endif
 using SkiaSharp;
-using SkiaSharp.TextBlock.Enum;
+using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
-    public class RichText 
+    public class RichTextBlock 
     {
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace SkiaSharp.TextBlock
         /// <summary>
         /// The contents of the rich text block
         /// </summary>
-        public List<Text> Spans = new List<Text>();
+        public List<TextBlock> Spans = new List<TextBlock>();
 
 
         private const float floatroundingmargin = 0.01f;
@@ -58,7 +58,7 @@ namespace SkiaSharp.TextBlock
 
             var width = rect.Width;
 
-            var line = new List<(Text text, MeasuredSpan wordspan)>();
+            var line = new List<(TextBlock text, MeasuredSpan wordspan)>();
             var linewidth = 0.0f;
 
             var linefontheight = 0f;

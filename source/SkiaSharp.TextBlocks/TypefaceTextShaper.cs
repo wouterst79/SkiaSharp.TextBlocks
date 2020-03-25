@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using HarfBuzzSharp;
 using SkiaSharp.HarfBuzz;
-using SkiaSharp.TextBlock.Enum;
+using SkiaSharp.TextBlocks.Enum;
 using Buffer = HarfBuzzSharp.Buffer;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
     /// <summary>
@@ -18,7 +18,7 @@ namespace SkiaSharp.TextBlock
         internal const int FONT_SIZE_SCALE = 512;
 
 
-        private Font font;
+        private HarfBuzzSharp.Font font;
 
         public SKTypeface Typeface { get; private set; }
 
@@ -36,7 +36,7 @@ namespace SkiaSharp.TextBlock
                 face.Index = index;
                 face.UnitsPerEm = Typeface.UnitsPerEm;
 
-                font = new Font(face);
+                font = new HarfBuzzSharp.Font(face);
                 font.SetScale(FONT_SIZE_SCALE, FONT_SIZE_SCALE);
 
                 font.SetFunctionsOpenType();

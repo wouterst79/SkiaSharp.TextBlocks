@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace SkiaSharp.TextBlock.Samples
+namespace SkiaSharp.TextBlocks.Samples
 {
 
     public class TextBlockSample
@@ -55,7 +55,7 @@ namespace SkiaSharp.TextBlock.Samples
                 var y = rect.Bottom + 1;
 
                 //// description below the sample
-                //rect = canvas.DrawTextBlock(name, new SKRect(0, y, width, 0), new FLFont(10), SKColors.DarkGray);
+                //rect = canvas.DrawTextBlock(name, new SKRect(0, y, width, 0), new Font(10), SKColors.DarkGray);
                 //y = rect.Bottom;
 
 

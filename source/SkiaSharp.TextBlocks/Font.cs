@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
     /// <summary>
     /// A font reference that can be used in a dictionary, and doesn't need to be disposed.
     /// </summary>
-    public class FLFont
+    public class Font
     {
 
         public string Name;
@@ -17,20 +17,20 @@ namespace SkiaSharp.TextBlock
 
         public SKFontStyle GetSKFontStyle() => Bold ? SKFontStyle.Bold : SKFontStyle.Normal;
 
-        public FLFont(float textSize, bool bold = false) : this(null, textSize, bold)
+        public Font(float textSize, bool bold = false) : this(null, textSize, bold)
         {
         }
 
-        public FLFont(string name, float textSize, bool bold = false)
+        public Font(string name, float textSize, bool bold = false)
         {
             Name = name;
             TextSize = textSize;
             Bold = bold;
         }
 
-        public static FLFont FromPaint(SKPaint paint) => new FLFont(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
+        public static Font FromPaint(SKPaint paint) => new Font(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
 
-        public override bool Equals(object obj) => obj is FLFont font && Name == font.Name && TextSize == font.TextSize && Bold == font.Bold;
+        public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && Bold == font.Bold;
 
         public override int GetHashCode()
         {

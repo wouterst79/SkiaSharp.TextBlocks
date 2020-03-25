@@ -1,8 +1,8 @@
-﻿using SkiaSharp.TextBlock.Enum;
+﻿using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
 
-namespace SkiaSharp.TextBlock
+namespace SkiaSharp.TextBlocks
 {
 
     /// <summary>
