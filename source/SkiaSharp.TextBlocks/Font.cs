@@ -11,11 +11,18 @@ namespace SkiaSharp.TextBlocks
     public class Font
     {
 
+        /// <summary>
+        /// True to use SKPaint.FakeBoldText for bold fonts.
+        /// Default: false
+        /// </summary>
+        public static bool UseFakeBoldText = false;
+
+
         public string Name;
         public float TextSize;
         public bool Bold;
 
-        public SKFontStyle GetSKFontStyle() => Bold ? SKFontStyle.Bold : SKFontStyle.Normal;
+        public SKFontStyle GetSKFontStyle() => Bold && !UseFakeBoldText ? SKFontStyle.Bold : SKFontStyle.Normal;
 
         public Font(float textSize, bool bold = false) : this(null, textSize, bold)
         {

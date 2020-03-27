@@ -1,0 +1,59 @@
+
+
+Android (14)
+
+fontMetrics
+{SkiaSharp.SKFontMetrics}
+    Ascent: -16.24
+    AverageCharacterWidth: 13.706
+    Bottom: 14.672
+    CapHeight: 10.262
+    Descent: 4.48
+    Leading: 0
+    MaxCharacterWidth: 55.02
+    StrikeoutPosition: -4.55
+    StrikeoutThickness: 0.7
+    Top: -25.312
+    UnderlinePosition: 1.75
+    UnderlineThickness: 0.7
+    XHeight: 7.602
+    XMax: 40.992
+    XMin: -14.028
+
+Forms.iOS
+{SkiaSharp.SKFontMetrics}
+    Ascent: -10.78027
+    AverageCharacterWidth: 33.55078
+    Bottom: 6.733398
+    CapHeight: 10.04199
+    Descent: 3.219727
+    Leading: 0
+    MaxCharacterWidth: 33.55078
+    StrikeoutPosition: null
+    StrikeoutThickness: null
+    Top: -15.70215
+    UnderlinePosition: 1.05957
+    UnderlineThickness: 0.6904297
+    XHeight: 7.321289
+    XMax: 20.24121
+    XMin: -13.30957
+
+UWP
+{SkiaSharp.SKFontMetrics}
+    Ascent: -15.1074219
+    AverageCharacterWidth: 0
+    Bottom: 5.75585938
+    CapHeight: 9.802734
+    Descent: 3.51367188
+    Leading: 0
+    MaxCharacterWidth: 36.0048828
+    StrikeoutPosition: -3.62304688
+    StrikeoutThickness: 0.6972656
+    Top: -18.1767578
+    UnderlinePosition: 1.21679688
+    UnderlineThickness: 0.813476563
+    XHeight: 7
+    XMax: 27.9863281
+    XMin: -8.018555
+
+

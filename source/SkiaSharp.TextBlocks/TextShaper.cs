@@ -81,6 +81,7 @@ namespace SkiaSharp.TextBlocks
                     Typeface = typeface,
                     TextEncoding = SKTextEncoding.GlyphId,
                     IsAntialias = IsAntiAlias,
+                    FakeBoldText = font.Bold && Font.UseFakeBoldText,
                 };
 
                 shape = shaper.Shape(paint, text);
