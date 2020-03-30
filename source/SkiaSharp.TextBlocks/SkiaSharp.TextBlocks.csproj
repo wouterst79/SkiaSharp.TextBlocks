@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Wouter Steenbergen</Authors>
     <Company>My Daily Bits LLC</Company>
-    <Version>1.0.3-alpha</Version>
+    <Version>1.0.4-alpha</Version>
     <Description>SkiaSharp.TextBlocks adds text block and rich text layout to SkiaSharp</Description>
     <Copyright>2020 Wouter Steenbergen</Copyright>
     <PackageLicenseFile></PackageLicenseFile>

@@ -140,7 +140,7 @@ var text = new RichTextBlock()
     Spans =
     {
         new TextBlock(new Font(10), SKColors.Black, "Hello "),
-        new TextBlock(new Font(20, true), SKColors.Black, "world! "),
+        new TextBlock(new Font(20, true), SKColors.Black, "world! (bold)"),
         new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
     }
 };
@@ -174,4 +174,9 @@ return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
 ```
 
 ## Lorum ipsum
-![Lorum_ipsum](./samples/output/Lorum_ipsum.png)
+default line spacing:
+
+![Lorum_ipsum-default_line_spacing](./samples/output/Lorum_ipsum-default_line_spacing.png)
+1.5x line spacing:
+
+![Lorum_ipsum-1.5x_line_spacing](./samples/output/Lorum_ipsum-1.5x_line_spacing.png)

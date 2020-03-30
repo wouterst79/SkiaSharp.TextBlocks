@@ -36,11 +36,20 @@ namespace SkiaSharp.TextBlocks
         public float LineHeight;
 
         /// <summary>
+        /// The factor to apply to line height. Set this before calling LoadMeasures.
+        /// Default: set through DefaultLineSpacing.
+        /// </summary>
+        public float LineSpacing = DefaultLineSpacing;
+
+        /// <summary>
+        /// Default line spacing.
+        /// </summary>
+        public static float DefaultLineSpacing = 1f;
+
+        /// <summary>
         /// Vertical margin, printed at both the top, and bottom. Use LoadMeasures to populate.
         /// </summary>
         public float MarginY; // both at the top, and at the bottom 
-
-
 
 
         /// <summary>
@@ -195,7 +204,7 @@ namespace SkiaSharp.TextBlocks
 
                 var fontMetrics = GlyphSpan.Paint.FontMetrics;
                 FontHeight = fontMetrics.CapHeight;
-                LineHeight = -fontMetrics.Ascent + fontMetrics.Descent;
+                LineHeight = (fontMetrics.Descent - fontMetrics.Ascent + fontMetrics.Leading) * LineSpacing;
                 MarginY = (LineHeight - FontHeight) / 2;
 
             }

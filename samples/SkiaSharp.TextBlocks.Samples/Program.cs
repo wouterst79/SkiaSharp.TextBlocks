@@ -195,7 +195,7 @@ return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection
                         Spans =
                         {
                             new TextBlock(new Font(10), SKColors.Black, "Hello "),
-                            new TextBlock(new Font(20, true), SKColors.Black, "world! "),
+                            new TextBlock(new Font(20, true), SKColors.Black, "world! (bold)"),
                             new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
                         }
                     };
@@ -205,7 +205,7 @@ return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection
     Spans =
     {
         new TextBlock(new Font(10), SKColors.Black, ""Hello ""),
-        new TextBlock(new Font(20, true), SKColors.Black, ""world! ""),
+        new TextBlock(new Font(20, true), SKColors.Black, ""world! (bold)""),
         new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
     }
 };
@@ -264,9 +264,15 @@ Curabitur pretium tincidunt lacus. Nulla gravida orci a odio.Nullam varius, turp
             // lorum ipsum
             new TextBlockSample(outputfolder, "Lorum ipsum", markdown)
 
-                .Paint(null, 401, (canvas) =>
+                .Paint("default line spacing", 401, (canvas) =>
                 {
                     var text = new TextBlock(new Font(14), SKColors.Black, lorum);
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 400, 0));
+                }, null)
+
+                .Paint("1.5x line spacing", 401, (canvas) =>
+                {
+                    var text = new TextBlock(new Font(14), SKColors.Black, lorum) { LineSpacing = 1.5f };
                     return canvas.DrawTextBlock(text, new SKRect(0, 0, 400, 0));
                 }, null)
 
