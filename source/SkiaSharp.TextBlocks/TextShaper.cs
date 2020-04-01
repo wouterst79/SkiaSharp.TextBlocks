@@ -36,6 +36,13 @@ namespace SkiaSharp.TextBlocks
         public Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
 
         /// <summary>
+        /// Use the shared font manager (and don't dispose cached typefaces).
+        /// Default: true
+        /// </summary>
+        public static bool UseSharedFontManagerWhenCaching = true;
+        public SKFontManager FontManager;
+
+        /// <summary>
         /// Create a new Text Shaper
         /// </summary>
         /// <param name="usechache">true to store all produced glyphspans (and typeface references) in an internal dictionary</param>
@@ -46,20 +53,43 @@ namespace SkiaSharp.TextBlocks
                 TypefaceCache = new Dictionary<char, SKTypeface>();
                 TypeShaperCache = new Dictionary<SKTypeface, TypefaceTextShaper>();
                 GlyphSpanCache = new Dictionary<(Font font, string text), GlyphSpan>();
+
+                if (!UseSharedFontManagerWhenCaching)
+                    FontManager = SKFontManager.CreateDefault();
             }
+
+            if (FontManager == null)
+                FontManager = SKFontManager.Default;
         }
 
         public void Dispose()
         {
-            if (TypefaceCache != null)
-                foreach (var typeface in TypefaceCache.Values)
-                    typeface.Dispose();
+
+            // Dispose type shapers
             if (TypeShaperCache != null)
                 foreach (var shaper in TypeShaperCache.Values)
                     shaper.Dispose();
+
+            // Dispose font manager and type face cache
+            var ownsFontManager = FontManager != SKFontManager.Default;
+            if (ownsFontManager)
+            {
+                // Typefaces may be shared between multiple caches if the default font manager is used.
+                // in this case, don't dispose them (and let them be garbage collected instead)
+
+                if (TypefaceCache != null)
+                    foreach (var typeface in TypefaceCache.Values)
+                        typeface.Dispose();
+
+                FontManager.Dispose();
+
+            }
+
+            // Dispose glyph span cache
             if (GlyphSpanCache != null)
                 foreach (var span in GlyphSpanCache.Values)
                     span.Dispose();
+
         }
 
 
@@ -74,6 +104,12 @@ namespace SkiaSharp.TextBlocks
 
                 var typeface = GetTypeface(font, text);
                 var shaper = GetFontShaper(typeface);
+
+                if (typeface == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"{font} - {typeface} - {text}");
+                }
+                //System.Diagnostics.Debug.WriteLine($"{font} - {typeface} - {typeface?.FamilyName} - {text}");
 
                 var paint = new SKPaint()
                 {
@@ -102,7 +138,7 @@ namespace SkiaSharp.TextBlocks
 
             // no cache
             if (TypefaceCache == null)
-                return font.GetTypeface(text);
+                return font.GetTypeface(text, FontManager);
 
 
             // use the cache
@@ -112,7 +148,7 @@ namespace SkiaSharp.TextBlocks
             {
                 ch = 'a';
                 if (!TypefaceCache.TryGetValue(ch, out var typeface))
-                    TypefaceCache.Add(ch, typeface = font.GetTypeface(text));
+                    TypefaceCache.Add(ch, typeface = font.GetTypeface(text, FontManager));
 
                 return typeface;
             }
@@ -124,7 +160,7 @@ namespace SkiaSharp.TextBlocks
                     if (TypefaceCache.TryGetValue(text[i], out typeface))
                         return typeface;
 
-                typeface = font.GetTypeface(text);
+                typeface = font.GetTypeface(text, FontManager);
 
                 for (var i = 0; i < text.Length && i < charsfortypefacecache; i++)
                     if (!TypefaceCache.ContainsKey(text[i]))

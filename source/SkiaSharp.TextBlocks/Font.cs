@@ -53,7 +53,7 @@ namespace SkiaSharp.TextBlocks
         /// Get the typeface that best matches the (first few characters in a) string.
         /// This supports finding the appropriate typeface for many characters, including ݐ, 年, ↺, and 🚀
         /// </summary>
-        public SKTypeface GetTypeface(string text)
+        public SKTypeface GetTypeface(string text, SKFontManager fontManager)
         {
 
             text = text.Trim();
@@ -62,7 +62,7 @@ namespace SkiaSharp.TextBlocks
             if (ch <= 256)
             {
                 ch = 'a';
-                var typeface = SKFontManager.Default.MatchCharacter(Name, GetSKFontStyle(), null, ch);
+                var typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
                 if (typeface == null) typeface = SKTypeface.CreateDefault();
                 return typeface;
             }
@@ -75,10 +75,10 @@ namespace SkiaSharp.TextBlocks
                 if (char.IsSurrogate(ch) && text.Length > 1 && char.IsSurrogatePair(ch, text[1]))
                 {
                     var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(0, 2), SKTextEncoding.Utf32);
-                    typeface = SKFontManager.Default.MatchCharacter(Name, GetSKFontStyle(), null, id);
+                    typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, id);
                 }
                 else
-                    typeface = SKFontManager.Default.MatchCharacter(Name, GetSKFontStyle(), null, ch);
+                    typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
 
                 if (typeface == null)
                     typeface = SKTypeface.CreateDefault();
