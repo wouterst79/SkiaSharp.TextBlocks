@@ -105,12 +105,6 @@ namespace SkiaSharp.TextBlocks
                 var typeface = GetTypeface(font, text);
                 var shaper = GetFontShaper(typeface);
 
-                if (typeface == null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{font} - {typeface} - {text}");
-                }
-                //System.Diagnostics.Debug.WriteLine($"{font} - {typeface} - {typeface?.FamilyName} - {text}");
-
                 var paint = new SKPaint()
                 {
                     TextSize = font.TextSize * Scale,
