@@ -154,6 +154,13 @@ return canvas.DrawTextBlock(text, new SKRect(0, 0, 150, 0));")
                 }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""年"");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
+                .Paint("Cyrillic", 200, (canvas) =>
+                {
+                    var text = new TextBlock(new Font(14), SKColors.Black, "yči");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""yči"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
+
                 .Paint("Symbols", 200, (canvas) =>
                 {
                     var text = new TextBlock(new Font(14), SKColors.Black, "↺");

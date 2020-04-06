@@ -82,7 +82,8 @@ namespace SkiaSharp.TextBlocks.Samples
             if (!string.IsNullOrEmpty(name))
                 Markdown.AppendLine(@$"{name}:
 ");
-            Markdown.AppendLine($@"![{filename}](./samples/output/{filename}.png)");
+            Markdown.AppendLine($@"![{filename}](./samples/output/{filename}.png)
+");
             if (!string.IsNullOrEmpty(code))
                 Markdown.AppendLine(@$"```C#
 {code}

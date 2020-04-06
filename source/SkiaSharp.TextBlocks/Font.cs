@@ -50,42 +50,48 @@ namespace SkiaSharp.TextBlocks
 
 
         /// <summary>
-        /// Get the typeface that best matches the (first few characters in a) string.
-        /// This supports finding the appropriate typeface for many characters, including ݐ, 年, ↺, and 🚀
+        /// Gets the best character in a string to use to resolve typename
         /// </summary>
-        public SKTypeface GetTypeface(string text, SKFontManager fontManager)
+        public (char representative, int location) GetRepresentativeCharacter(string text)
+        {
+            for (int i = 0; i < text.Length; i++)
+            {
+                var ch = text[i];
+                if (ch > 256)
+                    return (ch, i);
+            }
+            return ('a', 0);
+        }
+
+        /// <summary>
+        /// Get the typeface that best matches the representative characters in a string.
+        /// This supports finding the appropriate typeface for many characters, including ݐ, 年, ↺, and 🚀
+        /// It doesn't currently handle mixed text very well, but it's doing ok.
+        /// </summary>
+        public SKTypeface GetTypeface(string text, (char representative, int location) character, SKFontManager fontManager)
         {
 
-            text = text.Trim();
+            var fontstyle = GetSKFontStyle();
+            SKTypeface typeface;
 
-            var ch = text.Length == 0 ? 'a' : text[0];
-            if (ch <= 256)
+            var ch = character.representative;
+
+            // handle surrogates
+            if (char.IsSurrogate(ch) && text.Length > character.location + 1 && char.IsSurrogatePair(ch, text[character.location + 1]))
             {
-                ch = 'a';
-                var typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
-                if (typeface == null) typeface = SKTypeface.CreateDefault();
-                return typeface;
+                var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(character.location, 2), SKTextEncoding.Utf32);
+                typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, id);
             }
             else
             {
-
-                SKTypeface typeface;
-
-                // handle surrogates
-                if (char.IsSurrogate(ch) && text.Length > 1 && char.IsSurrogatePair(ch, text[1]))
-                {
-                    var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(0, 2), SKTextEncoding.Utf32);
-                    typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, id);
-                }
-                else
-                    typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
-
-                if (typeface == null)
-                    typeface = SKTypeface.CreateDefault();
-
-                return typeface;
-
+                typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
             }
+
+            if (typeface == null) typeface = fontManager.MatchFamily(Name, fontstyle);
+            if (typeface == null) typeface = SKTypeface.CreateDefault();
+
+            return typeface;
+
         }
 
     }

@@ -29,8 +29,6 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public int Scale = 1;
 
-        private const int charsfortypefacecache = 10;
-
         public Dictionary<char, SKTypeface> TypefaceCache;
         public Dictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
         public Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
@@ -130,39 +128,23 @@ namespace SkiaSharp.TextBlocks
         private SKTypeface GetTypeface(Font font, string text)
         {
 
+            text = text.Trim();
+            var character = font.GetRepresentativeCharacter(text);
+
             // no cache
             if (TypefaceCache == null)
-                return font.GetTypeface(text, FontManager);
+                return font.GetTypeface(text, character, FontManager);
 
+            var ch = character.representative;
 
             // use the cache
-            text = text.Trim();
-            var ch = text.Length == 0 ? 'a' : text[0];
-            if (ch <= 256)
+            if (!TypefaceCache.TryGetValue(ch, out var typeface))
             {
-                ch = 'a';
-                if (!TypefaceCache.TryGetValue(ch, out var typeface))
-                    TypefaceCache.Add(ch, typeface = font.GetTypeface(text, FontManager));
-
-                return typeface;
+                typeface = font.GetTypeface(text, character, FontManager);
+                TypefaceCache.Add(ch, typeface);
             }
-            else
-            {
 
-                SKTypeface typeface;
-                for (var i = 0; i < text.Length && i < charsfortypefacecache; i++)
-                    if (TypefaceCache.TryGetValue(text[i], out typeface))
-                        return typeface;
-
-                typeface = font.GetTypeface(text, FontManager);
-
-                for (var i = 0; i < text.Length && i < charsfortypefacecache; i++)
-                    if (!TypefaceCache.ContainsKey(text[i]))
-                        TypefaceCache.Add(text[i], typeface);
-
-                return typeface;
-
-            }
+            return typeface;
         }
 
         private TypefaceTextShaper GetFontShaper(SKTypeface typeface)
