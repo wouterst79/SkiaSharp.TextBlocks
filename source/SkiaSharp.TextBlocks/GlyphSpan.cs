@@ -1,6 +1,7 @@
 ﻿using SkiaSharp.TextBlocks.Enum;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace SkiaSharp.TextBlocks
 {
@@ -11,7 +12,7 @@ namespace SkiaSharp.TextBlocks
     public class GlyphSpan : IDisposable
     {
 
-        public readonly SKPaint Paint;
+        public readonly SKPaint[] Paints;
 
         /// <summary>
         /// The direction the span should be read in.
@@ -30,10 +31,12 @@ namespace SkiaSharp.TextBlocks
         // glyph               15            0
         // StartPoints.Index   0             15
         // StartPoints.x:    -100            0
-        // codepoints          0             30
+        // codepoints.Index    0             30
         //                              
-        private readonly byte[] Codepoints; // due to the way HarfBuzz works, these are always LTR
+        private readonly byte[] Codepoints; // due to the way HarfBuzz works, these are always LTR. 2 bytes per glyph
+        private readonly byte[] PaintIDs;
         private readonly SKPoint[] StartPoints;
+        private readonly SKPoint[] PaintPoints; // buffer for transposed locations
 
         /// <summary>
         /// All the words in the set.
@@ -51,25 +54,37 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public readonly int WordCount;
 
-        public GlyphSpan(SKPaint paint)
+        public GlyphSpan(SKPaint[] paints)
         {
-            Paint = paint;
+            if (paints == null || paints.Length < 1) throw new ArgumentOutOfRangeException(nameof(paints));
+            Paints = paints;
             Codepoints = new byte[0];
             StartPoints = new SKPoint[0];
+            PaintPoints = new SKPoint[0];
             Words = new (int, int, WordType)[0];
         }
 
-        public void Dispose() => Paint.Dispose();
-
-        public GlyphSpan(SKPaint paint, FlowDirection readDirection, byte[] codepoints, SKPoint[] startpoints, int glyphcount, List<(int firstglyph, int lastglyph, WordType type)> words)
+        public void Dispose()
         {
-            Paint = paint;
+            for (int i = 0; i < Paints.Length; i++)
+                Paints[i].Dispose();
+        }
+
+        public GlyphSpan(SKPaint[] paints, FlowDirection readDirection, byte[] paintids, byte[] codepoints, SKPoint[] startpoints, int glyphcount, List<(int firstglyph, int lastglyph, WordType type)> words)
+        {
+
+            if (paints == null || paints.Length < 1) throw new ArgumentOutOfRangeException(nameof(paints));
+
+            Paints = paints;
             ReadDirection = readDirection == FlowDirection.Unknown ? FlowDirection.LeftToRight : readDirection;
+            PaintIDs = paintids;
             Codepoints = codepoints;
             StartPoints = startpoints;
+            PaintPoints = new SKPoint[StartPoints.Length];
             GlyphCount = glyphcount; // note that the startpoints array in some scenario's isn't fully filled out, and glyphcount may be different from StartPoints.Length
             Words = words.ToArray();
             WordCount = Words.Length;
+
         }
 
 
@@ -161,34 +176,76 @@ namespace SkiaSharp.TextBlocks
             }
         }
 
-        /// <summary>
-        /// GetBlock is useful for preparing a part of the coordinate set for printing.
-        /// </summary>
-        public (byte[] bytes, SKPoint[] points) GetBlock(int firstglyph, int lastglyph, float x, float y)
+        unsafe public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color)
         {
 
-            var s = firstglyph;
-            var e = lastglyph;
-
-            var len = e - s + 1;
-            var bytes = new byte[len * 2];
-
-            var points = new SKPoint[len];
-
-            var start = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
-            Buffer.BlockCopy(Codepoints, start * 2, bytes, 0, len * 2);
-
-            var deltax = x - StartPoints[start].X;
+            var pointstart = (ReadDirection == FlowDirection.LeftToRight) ? firstglyph : StartPoints.Length - lastglyph - 2;
+            var deltax = x - StartPoints[pointstart].X;
             deltax = (float)Math.Round(deltax);
 
-            for (var i = 0; i < len; i++)
+            // draw each paint
+            fixed (byte* codepointstart = Codepoints)
             {
-                var sp = StartPoints[start + i];
-                points[i] = new SKPoint(deltax + sp.X, sp.Y + y);
+                for (int p = 0; p < Paints.Length; p++)
+                //for (int p = 0; p < 1; p++)
+                {
+
+                    for (int s = firstglyph; s <= lastglyph; s++)
+                        if (PaintIDs[s] == p)
+                        {
+
+                            var e = s;
+                            while (e < lastglyph && PaintIDs[e + 1] == p)
+                                e++;
+
+                            paintspan(p, s, e, (IntPtr)codepointstart);
+
+                            s = e;
+                        }
+
+                }
+
             }
 
-            return (bytes, points);
+            //var points = new SKPoint[len];
 
+            //var start = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
+            //Buffer.BlockCopy(Codepoints, start * 2, bytes, 0, len * 2);
+
+            //var deltax = x - StartPoints[start].X;
+            //deltax = (float)Math.Round(deltax);
+
+            //for (var i = 0; i < len; i++)
+            //{
+            //    var sp = StartPoints[start + i];
+            //    points[i] = new SKPoint(deltax + sp.X, sp.Y + y);
+            //}
+
+
+
+            void paintspan(int paintid, int s, int e, IntPtr codepointstart)
+            {
+
+                var len = e - s + 1;
+
+                // calculate paint locations
+                var firstpoint = pointstart + s - firstglyph;
+                for (var i = 0; i < len; i++)
+                {
+                    var sp = StartPoints[firstpoint + i];
+                    PaintPoints[i] = new SKPoint(deltax + sp.X, sp.Y + y);
+                }
+
+                var id = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
+                IntPtr ptr = codepointstart + id * 2;
+
+                var paint = Paints[paintid];
+                paint.Color = color;
+
+                canvas.DrawPositionedText(ptr, len * 2, PaintPoints, paint);
+
+
+            }
         }
 
     }

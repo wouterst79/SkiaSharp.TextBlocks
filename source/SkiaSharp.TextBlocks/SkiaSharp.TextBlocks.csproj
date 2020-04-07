@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Wouter Steenbergen</Authors>
     <Company>My Daily Bits LLC</Company>
-    <Version>1.0.7-alpha</Version>
+    <Version>1.1.0-alpha</Version>
     <Description>SkiaSharp.TextBlocks adds text block and rich text layout to SkiaSharp</Description>
     <Copyright>2020 Wouter Steenbergen</Copyright>
     <PackageLicenseFile></PackageLicenseFile>
@@ -13,6 +13,14 @@
     <PackageProjectUrl>https://github.com/wouterst79/SkiaSharp.TextBlocks</PackageProjectUrl>
     <RepositoryUrl>https://github.com/wouterst79/SkiaSharp.TextBlocks</RepositoryUrl>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

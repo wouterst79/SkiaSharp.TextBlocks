@@ -50,47 +50,89 @@ namespace SkiaSharp.TextBlocks
 
 
         /// <summary>
-        /// Gets the best character in a string to use to resolve typename
-        /// </summary>
-        public (char representative, int location) GetRepresentativeCharacter(string text)
-        {
-            for (int i = 0; i < text.Length; i++)
-            {
-                var ch = text[i];
-                if (ch > 256)
-                    return (ch, i);
-            }
-            return ('a', 0);
-        }
-
-        /// <summary>
-        /// Get the typeface that best matches the representative characters in a string.
+        /// Get the typefaces needed to print the character at position 
         /// This supports finding the appropriate typeface for many characters, including ݐ, 年, ↺, and 🚀
         /// It doesn't currently handle mixed text very well, but it's doing ok.
         /// </summary>
-        public SKTypeface GetTypeface(string text, (char representative, int location) character, SKFontManager fontManager)
+        public (SKTypeface[] typefaces, byte[] ids) GetTypefaces(string text, SKFontManager fontManager)
         {
 
-            var fontstyle = GetSKFontStyle();
-            SKTypeface typeface;
-
-            var ch = character.representative;
-
-            // handle surrogates
-            if (char.IsSurrogate(ch) && text.Length > character.location + 1 && char.IsSurrogatePair(ch, text[character.location + 1]))
+            using (var fontstyle = GetSKFontStyle())
             {
-                var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(character.location, 2), SKTextEncoding.Utf32);
-                typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, id);
-            }
-            else
-            {
-                typeface = fontManager.MatchCharacter(Name, GetSKFontStyle(), null, ch);
-            }
 
-            if (typeface == null) typeface = fontManager.MatchFamily(Name, fontstyle);
-            if (typeface == null) typeface = SKTypeface.CreateDefault();
+                var typefaces = new List<SKTypeface>();
+                var ids = new byte[text.Length];
 
-            return typeface;
+                for (int i = 0; i < text.Length; i++)
+                {
+
+                    var ch = text[i];
+
+                    SKTypeface typeface;
+                    if (char.IsSurrogate(ch) && text.Length > i + 1 && char.IsSurrogatePair(ch, text[i + 1]))
+                    {
+
+                        // handle surrogates
+
+                        var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(i, 2), SKTextEncoding.Utf32);
+                        typeface = fontManager.MatchCharacter(Name, fontstyle, null, id);
+
+                        if (typeface == null)
+                        {
+                            if (fontManager == SKFontManager.Default)
+                                typeface = SKTypeface.Default;
+                            else
+                                typeface = SKTypeface.CreateDefault();
+                        }
+
+                        var idx = (byte)typefaces.IndexOf(typeface);
+                        if (idx == 255)
+                        {
+                            typefaces.Add(typeface);
+                            idx = (byte)(typefaces.Count - 1);
+                        }
+
+                        ids[i] = idx;
+                        ids[++i] = idx;
+
+                    }
+                    else
+                    {
+
+                        // single character
+
+                        typeface = fontManager.MatchCharacter(Name, fontstyle, null, ch);
+
+                        if (typeface == null)
+                        {
+                            if (fontManager == SKFontManager.Default)
+                                typeface = SKTypeface.Default;
+                            else
+                                typeface = SKTypeface.CreateDefault();
+                        }
+
+                        var idx = (byte)typefaces.IndexOf(typeface);
+                        if (idx == 255)
+                        {
+                            typefaces.Add(typeface);
+                            idx = (byte)(typefaces.Count - 1);
+                        }
+
+                        ids[i] = idx;
+
+                    }
+
+                }
+
+                if (typefaces.Count == 0)
+                {
+                    // ie: empty string. we still need a typeface, to get font metrics
+                    typefaces.Add(SKTypeface.Default);
+                }
+
+                return (typefaces.ToArray(), ids);
+
+            }
 
         }
 

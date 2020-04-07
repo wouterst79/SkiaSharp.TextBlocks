@@ -202,7 +202,7 @@ namespace SkiaSharp.TextBlocks
 
                 GlyphSpan = textShaper.GetGlyphSpan(Font, Text);
 
-                var fontMetrics = GlyphSpan.Paint.FontMetrics;
+                var fontMetrics = GlyphSpan.Paints[0].FontMetrics;
                 FontHeight = fontMetrics.CapHeight;
                 LineHeight = (fontMetrics.Descent - fontMetrics.Ascent + fontMetrics.Leading) * LineSpacing;
                 MarginY = (LineHeight - FontHeight) / 2;

@@ -26,14 +26,8 @@ namespace SkiaSharp.TextBlocks
             if (measuredSpan.glyphend < 0)
                 return;
 
-            // calculate the block ("substring")
-            var block = glyphSpan.GetBlock(measuredSpan.glyphstart, measuredSpan.glyphend, x, y);
-
-            // paint the block
-            var paint = glyphSpan.Paint;
-            paint.Color = color;
-
-            canvas.DrawPositionedText(block.bytes, block.points, paint);
+            // paint the "substring" blocks
+            glyphSpan.PaintBlocks(canvas, measuredSpan.glyphstart, measuredSpan.glyphend, x, y, color);
 
         }
 
