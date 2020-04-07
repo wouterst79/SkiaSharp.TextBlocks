@@ -175,6 +175,13 @@ return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
                 }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""🌐🍪🍕🚀"");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
 
+                .Paint("Mixed", 200, (canvas) =>
+                {
+                    var text = new TextBlock(new Font(14), SKColors.Black, "年či↺🚀مر");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+                }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""年či↺🚀مر"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));")
+
                 .Paint("Rtl Support", 200, (canvas) =>
                 {
                     var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");

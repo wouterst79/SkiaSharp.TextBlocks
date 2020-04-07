@@ -142,6 +142,15 @@ var text = new TextBlock(new Font(14), SKColors.Black, "🌐🍪🍕🚀");
 return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
 ```
 
+Mixed:
+
+![Typeface_Detection-Mixed](./samples/output/Typeface_Detection-Mixed.png)
+
+```C#
+var text = new TextBlock(new Font(14), SKColors.Black, "年či↺🚀مر");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0));
+```
+
 Rtl Support:
 
 ![Typeface_Detection-Rtl_Support](./samples/output/Typeface_Detection-Rtl_Support.png)
