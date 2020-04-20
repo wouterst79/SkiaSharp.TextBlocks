@@ -305,18 +305,19 @@ namespace SkiaSharp.TextBlocks
                     for (var i = len - 1; i >= 0; i--)
                     {
 
-                        var glyph = idx - len + i;
+                        var cp = idx - len + i;
+                        var glyph = glyphcount + i;
 
                         var bytes = BitConverter.GetBytes((ushort)info[i].Codepoint);
-                        codepoints[glyph * 2] = bytes[0];
-                        codepoints[glyph * 2 + 1] = bytes[1];
+                        codepoints[cp * 2] = bytes[0];
+                        codepoints[cp * 2 + 1] = bytes[1];
 
                         // move the cursor
                         x -= pos[i].XAdvance * scalex;
                         y -= pos[i].YAdvance * scaley;
 
                         paintids[glyph] = typefaceid;
-                        startpoints[glyph] = new SKPoint(x - pos[i].XOffset * scalex, y - pos[i].YOffset * scaley);
+                        startpoints[cp] = new SKPoint(x - pos[i].XOffset * scalex, y - pos[i].YOffset * scaley);
 
                     }
 

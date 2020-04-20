@@ -187,7 +187,6 @@ namespace SkiaSharp.TextBlocks
             fixed (byte* codepointstart = Codepoints)
             {
                 for (int p = 0; p < Paints.Length; p++)
-                //for (int p = 0; p < 1; p++)
                 {
 
                     for (int s = firstglyph; s <= lastglyph; s++)
@@ -201,43 +200,29 @@ namespace SkiaSharp.TextBlocks
                             paintspan(p, s, e, (IntPtr)codepointstart);
 
                             s = e;
+
                         }
 
                 }
 
             }
 
-            //var points = new SKPoint[len];
-
-            //var start = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
-            //Buffer.BlockCopy(Codepoints, start * 2, bytes, 0, len * 2);
-
-            //var deltax = x - StartPoints[start].X;
-            //deltax = (float)Math.Round(deltax);
-
-            //for (var i = 0; i < len; i++)
-            //{
-            //    var sp = StartPoints[start + i];
-            //    points[i] = new SKPoint(deltax + sp.X, sp.Y + y);
-            //}
-
-
-
             void paintspan(int paintid, int s, int e, IntPtr codepointstart)
             {
+
+
+                var idx = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
 
                 var len = e - s + 1;
 
                 // calculate paint locations
-                var firstpoint = pointstart + s - firstglyph;
                 for (var i = 0; i < len; i++)
                 {
-                    var sp = StartPoints[firstpoint + i];
+                    var sp = StartPoints[idx + i];
                     PaintPoints[i] = new SKPoint(deltax + sp.X, sp.Y + y);
                 }
 
-                var id = (ReadDirection == FlowDirection.LeftToRight) ? s : StartPoints.Length - e - 2;
-                IntPtr ptr = codepointstart + id * 2;
+                IntPtr ptr = codepointstart + idx * 2;
 
                 var paint = Paints[paintid];
                 paint.Color = color;
