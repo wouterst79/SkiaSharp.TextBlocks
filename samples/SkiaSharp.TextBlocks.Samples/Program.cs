@@ -211,67 +211,51 @@ return canvas.DrawTextBlock(text, new SKRect(50, 0, 100, 0), null, FlowDirection
 
                 .Paint("Shorter", 200, (canvas) =>
                 {
-                    var text = new RichTextBlock()
-                    {
-                        Spans =
-                        {
-                            new TextBlock(new Font(10), SKColors.Black, "Hello "),
-                            new TextBlock(new Font(20, true), SKColors.Black, "world! (bold)"),
-                            new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
-                        }
-                    };
+                    var text = new RichTextBlock(
+                        new TextBlock(new Font(10), SKColors.Black, "Hello "),
+                        new TextBlock(new Font(20, true), SKColors.Black, "world! (bold)"),
+                        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!")
+                    );
                     return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
-                }, @"var text = new RichTextBlock()
-{
-    Spans =
-    {
-        new TextBlock(new Font(10), SKColors.Black, ""Hello ""),
-        new TextBlock(new Font(20, true), SKColors.Black, ""world! (bold)""),
-        new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
-    }
-};
+                }, @"var text = new RichTextBlock(
+    new TextBlock(new Font(10), SKColors.Black, ""Hello ""),
+    new TextBlock(new Font(20, true), SKColors.Black, ""world! (bold)""),
+    new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!"")
+);
 return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
 ")
 
                 .Paint("Longer", 200, (canvas) =>
                 {
-                    var text = new RichTextBlock()
-                    {
-                        Spans =
-                        {
-                            new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new Font(10), SKColors.Black, "Hello "),
-                            new TextBlock(new Font(20, true), SKColors.Black, "world! "),
-                            new TextBlock(new Font(14), SKColors.Black, @"Trailing new-line support:
+                    var text = new RichTextBlock(
+                        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+                        new TextBlock(new Font(10), SKColors.Black, "Hello "),
+                        new TextBlock(new Font(20, true), SKColors.Black, "world! "),
+                        new TextBlock(new Font(14), SKColors.Black, @"Trailing new-line support:
 
 "),
-                            new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم"),
-                            new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new Font(14), SKColors.Black, "年"),
-                            new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
-                            new TextBlock(new Font(14), SKColors.Black, "↺"),
-                        }
-                    };
+                        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+                        new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم"),
+                        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+                        new TextBlock(new Font(14), SKColors.Black, "年"),
+                        new TextBlock(new Font(16), SKColors.Green, "SkiaSharp Rocks!"),
+                        new TextBlock(new Font(14), SKColors.Black, "↺")
+                    );
                     return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));
-                }, @"var text = new RichTextBlock()
-{
-    Spans =
-    {
-        new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
-        new TextBlock(new Font(10), SKColors.Black, ""Hello ""),
-        new TextBlock(new Font(20, true), SKColors.Black, ""world! ""),
-        new TextBlock(new Font(14), SKColors.Black, @""Trailing new-line support:
+                }, @"var text = new RichTextBlock(
+    new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
+    new TextBlock(new Font(10), SKColors.Black, ""Hello ""),
+    new TextBlock(new Font(20, true), SKColors.Black, ""world! ""),
+    new TextBlock(new Font(14), SKColors.Black, @""Trailing new-line support:
 
 ""),
-        new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
-        new TextBlock(new Font(14), SKColors.Black, ""مرحبا بالعالم""),
-        new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
-        new TextBlock(new Font(14), SKColors.Black, ""年""),
-        new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
-        new TextBlock(new Font(14), SKColors.Black, ""↺""),
-    }
-};
+    new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
+    new TextBlock(new Font(14), SKColors.Black, ""مرحبا بالعالم""),
+    new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
+    new TextBlock(new Font(14), SKColors.Black, ""年""),
+    new TextBlock(new Font(16), SKColors.Green, ""SkiaSharp Rocks!""),
+    new TextBlock(new Font(14), SKColors.Black, ""↺"")
+);
 return canvas.DrawRichTextBlock(text, new SKRect(0, 0, 200, 0));")
 
                 ;

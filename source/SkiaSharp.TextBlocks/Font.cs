@@ -35,7 +35,13 @@ namespace SkiaSharp.TextBlocks
             Bold = bold;
         }
 
+        public Font(Font prototype) : this(prototype.Name, prototype.TextSize, prototype.Bold)
+        {
+        }
+
         public static Font FromPaint(SKPaint paint) => new Font(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
+        public Font WithTextSize(float textSize) => new Font(this) { TextSize = textSize };
+        public Font WithBold(bool bold) => new Font(this) { Bold = bold};
 
         public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && Bold == font.Bold;
 
