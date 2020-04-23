@@ -1,5 +1,13 @@
-# SkiaSharp.TextBlock
-SkiaSharp.TextBlock adds text block and rich text layout to SkiaSharp 
+# SkiaSharp.TextBlocks
+SkiaSharp.TextBlocks adds text block and rich text layout to SkiaSharp. Tested on iOS, Android, and Windows, and likely to perform on other SkiaSharp supported platforms.
+
+## Using SkiaSharp.TextBlocks
+
+SkiaSharp.TextBlocks is available as a convenient NuGet package, to use install the package like this:
+
+```
+nuget install SkiaSharp.TextBlocks
+```
 
 ## Sample uses:
 NOTE: DrawTextBlock returns the SKRect that contains the text. The sample project draws a green box around this rect. See the [source](./samples) for details.
