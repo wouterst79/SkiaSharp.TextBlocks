@@ -156,9 +156,9 @@ namespace SkiaSharp.TextBlocks
                             if (i != childlinecount - 1)
                                 // text returned multiple lines, lay a line out for all that aren't the last
                                 LayoutLine();
-                            else
-                                if (wordspan.glyphend == -1)
-                                LayoutLine(); // finish the line if the lines end with a line break;
+                            //else
+                              //  if (wordspan.glyphend == -1)
+                                //LayoutLine(); // finish the line if the lines end with a line break;
 
                         }
 

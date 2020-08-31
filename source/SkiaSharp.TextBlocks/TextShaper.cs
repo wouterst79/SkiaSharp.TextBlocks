@@ -112,7 +112,10 @@ namespace SkiaSharp.TextBlocks
                 shape = Shape(typefaces, shapers, paints, text, ids);
 
                 if (GlyphSpanCache != null)
-                    GlyphSpanCache.Add((font, text), shape);
+#if DEBUG
+                    GlyphSpanCache[(font, text)] = shape;
+#endif
+                //GlyphSpanCache.Add((font, text), shape);
 
             }
 
@@ -156,7 +159,7 @@ namespace SkiaSharp.TextBlocks
             var startpointlength = text.Length + 1; // default point buffer length
             var startpoints = new SKPoint[startpointlength];
             var paintids = new byte[startpointlength];
-            var codepoints = new byte[startpointlength * 2];
+            var codepoints = new ushort[startpointlength * 2];
             var glyphcount = 0;
 
             var words = new List<(int startglyph, int endglyph, WordType type)>();
@@ -244,7 +247,7 @@ namespace SkiaSharp.TextBlocks
                     startpointlength = glyphcount + len + startpointlength / 2 + 1;
                     var newstartpoints = new SKPoint[startpointlength];
                     var newpaintids = new byte[startpointlength];
-                    var newcodepoints = new byte[startpointlength * 2];
+                    var newcodepoints = new ushort[startpointlength];
 
                     int s;
                     if (direction == FlowDirection.LeftToRight)
@@ -256,8 +259,7 @@ namespace SkiaSharp.TextBlocks
                     {
                         newstartpoints[s + i] = startpoints[i];
                         newpaintids[s + i] = paintids[i];
-                        newcodepoints[(s + i) * 2] = codepoints[i * 2];
-                        newcodepoints[(s + i) * 2 + 1] = codepoints[i * 2 + 1];
+                        newcodepoints[s + i] = codepoints[i];
                     }
 
                     startpoints = newstartpoints;
@@ -277,9 +279,7 @@ namespace SkiaSharp.TextBlocks
 
                         var glyph = glyphcount + i;
 
-                        var bytes = BitConverter.GetBytes((ushort)info[i].Codepoint);
-                        codepoints[glyph * 2] = bytes[0];
-                        codepoints[glyph * 2 + 1] = bytes[1];
+                        codepoints[glyph] = (ushort)info[i].Codepoint;
 
                         paintids[glyph] = typefaceid;
                         startpoints[glyph] = new SKPoint(x + pos[i].XOffset * scalex, y - pos[i].YOffset * scaley);

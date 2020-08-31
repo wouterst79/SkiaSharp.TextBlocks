@@ -17,6 +17,10 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public static bool UseFakeBoldText = false;
 
+        /// <summary>
+        /// Default font name if none supplied: Default: null = use system default
+        /// </summary>
+        public static string DefaultFontName;
 
         public string Name;
         public float TextSize;
@@ -30,7 +34,7 @@ namespace SkiaSharp.TextBlocks
 
         public Font(string name, float textSize, bool bold = false)
         {
-            Name = name;
+            Name = name ?? DefaultFontName;
             TextSize = textSize;
             Bold = bold;
         }
@@ -41,7 +45,7 @@ namespace SkiaSharp.TextBlocks
 
         public static Font FromPaint(SKPaint paint) => new Font(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
         public Font WithTextSize(float textSize) => new Font(this) { TextSize = textSize };
-        public Font WithBold(bool bold) => new Font(this) { Bold = bold};
+        public Font WithBold(bool bold) => new Font(this) { Bold = bold };
 
         public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && Bold == font.Bold;
 
@@ -63,7 +67,8 @@ namespace SkiaSharp.TextBlocks
         public (SKTypeface[] typefaces, byte[] ids) GetTypefaces(string text, SKFontManager fontManager)
         {
 
-            using (var fontstyle = GetSKFontStyle())
+            //            using (var fontstyle = GetSKFontStyle())
+            using (var fontstyle = new SKFontStyle(Bold ? SKFontStyleWeight.SemiBold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright))
             {
 
                 var typefaces = new List<SKTypeface>();

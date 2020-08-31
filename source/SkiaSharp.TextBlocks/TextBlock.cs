@@ -13,11 +13,16 @@ namespace SkiaSharp.TextBlocks
     {
 
         public readonly Font Font;
-        public readonly SKColor Color;
+        public SKColor Color;
         public readonly string Text;
 
         public readonly LineBreakMode LineBreakMode = LineBreakMode.WordWrap;
         public int MaxLines = int.MaxValue;
+
+
+        // Animated drawing
+        public readonly Func<int, int, SKColor> GetLineColor;
+        public readonly GlyphAnimation GlyphAnimation;
 
 
         /// <summary>
@@ -73,6 +78,23 @@ namespace SkiaSharp.TextBlocks
         {
             LineBreakMode = lineBreakMode;
         }
+
+        public TextBlock(Font font, Func<int, int, SKColor> getlinecolor, string text)
+        {
+            Font = font;
+            Color = default;
+            GetLineColor = getlinecolor;
+            Text = text ?? "";
+        }
+
+        public TextBlock(Font font, SKColor color, string text, GlyphAnimation glyphAnimation)
+        {
+            Font = font;
+            Color = color;
+            Text = text ?? "";
+            GlyphAnimation = glyphAnimation;
+        }
+
 
 
         /// <summary>
@@ -154,8 +176,10 @@ namespace SkiaSharp.TextBlocks
             {
 
                 var lines = GetLines(rect.Width);
+                var i = 0;
                 foreach (var line in lines)
                 {
+                    if (GetLineColor != null) Color = GetLineColor(i++, lines.Count);
                     if (LineBreakMode == LineBreakMode.WordWrap)
                     {
                         float x;
@@ -163,12 +187,12 @@ namespace SkiaSharp.TextBlocks
                             x = rect.Left;
                         else
                             x = rect.Right - line.width;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line);
+                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
                     }
                     else if (LineBreakMode == LineBreakMode.Center)
                     {
                         var x = rect.Left + (rect.Width - line.width) / 2;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line);
+                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
                     }
                     y += LineHeight;
                 }

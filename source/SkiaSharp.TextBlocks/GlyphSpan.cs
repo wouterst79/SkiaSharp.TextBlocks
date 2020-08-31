@@ -33,7 +33,7 @@ namespace SkiaSharp.TextBlocks
         // StartPoints.x:    -100            0
         // codepoints.Index    0             30
         //                              
-        private readonly byte[] Codepoints; // due to the way HarfBuzz works, these are always LTR. 2 bytes per glyph
+        private readonly ushort[] Codepoints; // due to the way HarfBuzz works, these are always LTR. 2 bytes per glyph
         private readonly byte[] PaintIDs;
         private readonly SKPoint[] StartPoints;
         private readonly SKPoint[] PaintPoints; // buffer for transposed locations
@@ -58,7 +58,7 @@ namespace SkiaSharp.TextBlocks
         {
             if (paints == null || paints.Length < 1) throw new ArgumentOutOfRangeException(nameof(paints));
             Paints = paints;
-            Codepoints = new byte[0];
+            Codepoints = new ushort[0];
             StartPoints = new SKPoint[0];
             PaintPoints = new SKPoint[0];
             Words = new (int, int, WordType)[0];
@@ -70,7 +70,7 @@ namespace SkiaSharp.TextBlocks
                 Paints[i].Dispose();
         }
 
-        public GlyphSpan(SKPaint[] paints, FlowDirection readDirection, byte[] paintids, byte[] codepoints, SKPoint[] startpoints, int glyphcount, List<(int firstglyph, int lastglyph, WordType type)> words)
+        public GlyphSpan(SKPaint[] paints, FlowDirection readDirection, byte[] paintids, ushort[] codepoints, SKPoint[] startpoints, int glyphcount, List<(int firstglyph, int lastglyph, WordType type)> words)
         {
 
             if (paints == null || paints.Length < 1) throw new ArgumentOutOfRangeException(nameof(paints));
@@ -176,7 +176,34 @@ namespace SkiaSharp.TextBlocks
             }
         }
 
-        unsafe public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color)
+        public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color, GlyphAnimation animation)
+        {
+
+            var pointstart = (ReadDirection == FlowDirection.LeftToRight) ? firstglyph : StartPoints.Length - lastglyph - 2;
+            var deltax = x - StartPoints[pointstart].X;
+            deltax = (float)Math.Round(deltax);
+
+            var points = new SKPoint[1];
+            for (var g = firstglyph; g <= lastglyph; g++)
+            {
+
+                var paint = Paints[PaintIDs[g]];
+
+                var idx = (ReadDirection == FlowDirection.LeftToRight) ? g : StartPoints.Length - g - 2;
+                var sp = StartPoints[idx];
+                points[0] = animation.Transpose(g, GlyphCount, new SKPoint(deltax + sp.X, sp.Y + y));
+                paint.Color = animation.GetColor(g, GlyphCount);
+
+                var builder = new SKTextBlobBuilder();
+                builder.AddPositionedRun(Codepoints.AsSpan(g, 1), paint.ToFont(), points.AsSpan());
+                using (var textBlob = builder.Build())
+                    canvas.DrawText(textBlob, 0, 0, paint);
+
+            }
+
+        }
+
+        public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color)
         {
 
             var pointstart = (ReadDirection == FlowDirection.LeftToRight) ? firstglyph : StartPoints.Length - lastglyph - 2;
@@ -184,7 +211,9 @@ namespace SkiaSharp.TextBlocks
             deltax = (float)Math.Round(deltax);
 
             // draw each paint
-            fixed (byte* codepointstart = Codepoints)
+
+            var codepointstart = new ReadOnlySpan<ushort>(Codepoints);
+            //fixed (byte* codepointstart = Codepoints)
             {
                 for (int p = 0; p < Paints.Length; p++)
                 {
@@ -197,7 +226,7 @@ namespace SkiaSharp.TextBlocks
                             while (e < lastglyph && PaintIDs[e + 1] == p)
                                 e++;
 
-                            paintspan(p, s, e, (IntPtr)codepointstart);
+                            paintspan(p, s, e, codepointstart);
 
                             s = e;
 
@@ -207,7 +236,7 @@ namespace SkiaSharp.TextBlocks
 
             }
 
-            void paintspan(int paintid, int s, int e, IntPtr codepointstart)
+            void paintspan(int paintid, int s, int e, ReadOnlySpan<ushort> codepointstart2)
             {
 
 
@@ -222,12 +251,24 @@ namespace SkiaSharp.TextBlocks
                     PaintPoints[i] = new SKPoint(deltax + sp.X, sp.Y + y);
                 }
 
-                IntPtr ptr = codepointstart + idx * 2;
+                ReadOnlySpan<ushort> pos = codepointstart2.Slice(idx, len);// + idx * 2;
 
                 var paint = Paints[paintid];
                 paint.Color = color;
 
-                canvas.DrawPositionedText(ptr, len * 2, PaintPoints, paint);
+
+                var builder = new SKTextBlobBuilder();
+                builder.AddPositionedRun(pos, paint.ToFont(), PaintPoints.AsSpan(0, len));
+                using (var textBlob = builder.Build())
+                    canvas.DrawText(textBlob, 0, 0, paint);
+
+                //    using var blob = SKTextBlob.CreatePositioned(.CreatePositioned(text, paint.GetFont(), points);
+                //if (blob == null)
+                //    return;
+
+                //var tb = SKTextBlob.Create(() 
+                //canvas.DrawText()
+                //canvas.DrawPositionedText(ptr, len * 2, PaintPoints, paint);
 
 
             }
