@@ -192,7 +192,7 @@ namespace SkiaSharp.TextBlocks
                 var idx = (ReadDirection == FlowDirection.LeftToRight) ? g : StartPoints.Length - g - 2;
                 var sp = StartPoints[idx];
                 points[0] = animation.Transpose(g, GlyphCount, new SKPoint(deltax + sp.X, sp.Y + y));
-                paint.Color = animation.GetColor(g, GlyphCount);
+                paint.Color = animation.GetColor == null ? color : animation.GetColor(g, GlyphCount);
 
                 var builder = new SKTextBlobBuilder();
                 builder.AddPositionedRun(Codepoints.AsSpan(g, 1), paint.ToFont(), points.AsSpan());

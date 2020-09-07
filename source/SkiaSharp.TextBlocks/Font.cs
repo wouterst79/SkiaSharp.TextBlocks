@@ -10,13 +10,6 @@ namespace SkiaSharp.TextBlocks
     /// </summary>
     public class Font
     {
-
-        /// <summary>
-        /// True to use SKPaint.FakeBoldText for bold fonts.
-        /// Default: false
-        /// </summary>
-        public static bool UseFakeBoldText = false;
-
         /// <summary>
         /// Default font name if none supplied: Default: null = use system default
         /// </summary>
@@ -24,9 +17,8 @@ namespace SkiaSharp.TextBlocks
 
         public string Name;
         public float TextSize;
-        public bool Bold;
-
-        public SKFontStyle GetSKFontStyle() => Bold && !UseFakeBoldText ? SKFontStyle.Bold : SKFontStyle.Normal;
+        public SKFontStyle FontStyle;
+        public float? LineHeight;
 
         public Font(float textSize, bool bold = false) : this(null, textSize, bold)
         {
@@ -36,25 +28,35 @@ namespace SkiaSharp.TextBlocks
         {
             Name = name ?? DefaultFontName;
             TextSize = textSize;
-            Bold = bold;
+            FontStyle = bold ? SKFontStyle.Bold : SKFontStyle.Normal;
         }
 
-        public Font(Font prototype) : this(prototype.Name, prototype.TextSize, prototype.Bold)
+        public Font(string name, float textSize, SKFontStyle fontStyle, float? lineHeight = null)
+        {
+            Name = name ?? DefaultFontName;
+            TextSize = textSize;
+            FontStyle = fontStyle;
+            LineHeight = lineHeight;
+        }
+
+        public Font(Font prototype) : this(prototype.Name, prototype.TextSize, prototype.FontStyle)
         {
         }
 
         public static Font FromPaint(SKPaint paint) => new Font(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
         public Font WithTextSize(float textSize) => new Font(this) { TextSize = textSize };
-        public Font WithBold(bool bold) => new Font(this) { Bold = bold };
+//        public Font WithBold(bool bold) => new Font(this) { FontStyle = SKFontStyle.Bold };
 
-        public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && Bold == font.Bold;
+        public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && FontStyle.Weight == font.FontStyle.Weight && FontStyle.Width == font.FontStyle.Width && FontStyle.Slant == font.FontStyle.Slant;
 
         public override int GetHashCode()
         {
             var hashCode = -274887227;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             hashCode = hashCode * -1521134295 + TextSize.GetHashCode();
-            hashCode = hashCode * -1521134295 + Bold.GetHashCode();
+            hashCode = hashCode * -1521134295 + FontStyle.Weight.GetHashCode();
+            hashCode = hashCode * -1521134295 + FontStyle.Width.GetHashCode();
+            hashCode = hashCode * -1521134295 + FontStyle.Slant.GetHashCode();
             return hashCode;
         }
 
@@ -67,83 +69,77 @@ namespace SkiaSharp.TextBlocks
         public (SKTypeface[] typefaces, byte[] ids) GetTypefaces(string text, SKFontManager fontManager)
         {
 
-            //            using (var fontstyle = GetSKFontStyle())
-            using (var fontstyle = new SKFontStyle(Bold ? SKFontStyleWeight.SemiBold : SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright))
+            var typefaces = new List<SKTypeface>();
+            var ids = new byte[text.Length];
+
+            for (int i = 0; i < text.Length; i++)
             {
 
-                var typefaces = new List<SKTypeface>();
-                var ids = new byte[text.Length];
+                var ch = text[i];
 
-                for (int i = 0; i < text.Length; i++)
+                SKTypeface typeface;
+                if (char.IsSurrogate(ch) && text.Length > i + 1 && char.IsSurrogatePair(ch, text[i + 1]))
                 {
 
-                    var ch = text[i];
+                    // handle surrogates
 
-                    SKTypeface typeface;
-                    if (char.IsSurrogate(ch) && text.Length > i + 1 && char.IsSurrogatePair(ch, text[i + 1]))
+                    var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(i, 2), SKTextEncoding.Utf32);
+                    typeface = fontManager.MatchCharacter(Name, FontStyle, null, id);
+
+                    if (typeface == null)
                     {
-
-                        // handle surrogates
-
-                        var id = StringUtilities.GetUnicodeCharacterCode(text.Substring(i, 2), SKTextEncoding.Utf32);
-                        typeface = fontManager.MatchCharacter(Name, fontstyle, null, id);
-
-                        if (typeface == null)
-                        {
-                            if (fontManager == SKFontManager.Default)
-                                typeface = SKTypeface.Default;
-                            else
-                                typeface = SKTypeface.CreateDefault();
-                        }
-
-                        var idx = (byte)typefaces.IndexOf(typeface);
-                        if (idx == 255)
-                        {
-                            typefaces.Add(typeface);
-                            idx = (byte)(typefaces.Count - 1);
-                        }
-
-                        ids[i] = idx;
-                        ids[++i] = idx;
-
+                        if (fontManager == SKFontManager.Default)
+                            typeface = SKTypeface.Default;
+                        else
+                            typeface = SKTypeface.CreateDefault();
                     }
-                    else
+
+                    var idx = (byte)typefaces.IndexOf(typeface);
+                    if (idx == 255)
                     {
-
-                        // single character
-
-                        typeface = fontManager.MatchCharacter(Name, fontstyle, null, ch);
-
-                        if (typeface == null)
-                        {
-                            if (fontManager == SKFontManager.Default)
-                                typeface = SKTypeface.Default;
-                            else
-                                typeface = SKTypeface.CreateDefault();
-                        }
-
-                        var idx = (byte)typefaces.IndexOf(typeface);
-                        if (idx == 255)
-                        {
-                            typefaces.Add(typeface);
-                            idx = (byte)(typefaces.Count - 1);
-                        }
-
-                        ids[i] = idx;
-
+                        typefaces.Add(typeface);
+                        idx = (byte)(typefaces.Count - 1);
                     }
+
+                    ids[i] = idx;
+                    ids[++i] = idx;
 
                 }
-
-                if (typefaces.Count == 0)
+                else
                 {
-                    // ie: empty string. we still need a typeface, to get font metrics
-                    typefaces.Add(SKTypeface.Default);
-                }
 
-                return (typefaces.ToArray(), ids);
+                    // single character
+
+                    typeface = fontManager.MatchCharacter(Name, FontStyle, null, ch);
+
+                    if (typeface == null)
+                    {
+                        if (fontManager == SKFontManager.Default)
+                            typeface = SKTypeface.Default;
+                        else
+                            typeface = SKTypeface.CreateDefault();
+                    }
+
+                    var idx = (byte)typefaces.IndexOf(typeface);
+                    if (idx == 255)
+                    {
+                        typefaces.Add(typeface);
+                        idx = (byte)(typefaces.Count - 1);
+                    }
+
+                    ids[i] = idx;
+
+                }
 
             }
+
+            if (typefaces.Count == 0)
+            {
+                // ie: empty string. we still need a typeface, to get font metrics
+                typefaces.Add(SKTypeface.Default);
+            }
+
+            return (typefaces.ToArray(), ids);
 
         }
 

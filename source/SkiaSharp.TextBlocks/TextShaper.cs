@@ -105,17 +105,13 @@ namespace SkiaSharp.TextBlocks
                         Typeface = typefaces[i],
                         TextEncoding = SKTextEncoding.GlyphId,
                         IsAntialias = IsAntiAlias,
-                        FakeBoldText = font.Bold && Font.UseFakeBoldText,
                     };
                 }
 
                 shape = Shape(typefaces, shapers, paints, text, ids);
 
                 if (GlyphSpanCache != null)
-#if DEBUG
                     GlyphSpanCache[(font, text)] = shape;
-#endif
-                //GlyphSpanCache.Add((font, text), shape);
 
             }
 

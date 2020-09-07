@@ -21,8 +21,8 @@ namespace SkiaSharp.TextBlocks
 
 
         // Animated drawing
-        public readonly Func<int, int, SKColor> GetLineColor;
-        public readonly GlyphAnimation GlyphAnimation;
+        public Func<int, int, SKColor> GetLineColor { get; set; }
+        public GlyphAnimation GlyphAnimation { get; set; }
 
 
         /// <summary>
@@ -228,7 +228,10 @@ namespace SkiaSharp.TextBlocks
 
                 var fontMetrics = GlyphSpan.Paints[0].FontMetrics;
                 FontHeight = fontMetrics.CapHeight;
-                LineHeight = (fontMetrics.Descent - fontMetrics.Ascent + fontMetrics.Leading) * LineSpacing;
+                if (Font.LineHeight.HasValue) 
+                    LineHeight = Font.LineHeight.Value;
+                else
+                    LineHeight = (fontMetrics.Descent - fontMetrics.Ascent + fontMetrics.Leading) * LineSpacing;
                 MarginY = (LineHeight - FontHeight) / 2;
 
             }

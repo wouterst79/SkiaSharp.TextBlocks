@@ -20,6 +20,9 @@ namespace SkiaSharp.TextBlocks
             if (canvas == null)
                 return;
 
+            if (color.Alpha == 0)
+                return;
+
             if (measuredSpan.glyphstart < 0)
                 return;
 
