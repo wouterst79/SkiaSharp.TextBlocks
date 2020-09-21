@@ -47,7 +47,7 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public RichTextSpan Add(TextBlock textblock)
         {
-            var newspan = new RichTextSpan { TextBlock = textblock };
+            var newspan = new TextBlockSpan(textblock);
             Spans.Add(newspan);
             return newspan;
         }
@@ -58,7 +58,7 @@ namespace SkiaSharp.TextBlocks
         public void Add(IEnumerable<TextBlock> textblocks)
         {
             foreach (var textblock in textblocks)
-                Spans.Add(new RichTextSpan { TextBlock = textblock });
+                Spans.Add(new TextBlockSpan(textblock));
         }
 
         /// <summary>
@@ -122,46 +122,42 @@ namespace SkiaSharp.TextBlocks
 
                 // calculate maximum font dimensions
                 foreach (var span in Spans)
-                    if (span != null && span.TextBlock != null)
+                    if (span != null)
                     {
-                        var text = span.TextBlock;
-                        text.LoadMeasures(textShaper);
-                        if (linefontheight < text.FontHeight)
-                            linefontheight = text.FontHeight;
-                        if (linemarginy < text.MarginY)
-                            linemarginy = text.MarginY;
+                        var (fontheight, marginy) = span.GetMeasures(textShaper);
+                        if (linefontheight < fontheight) linefontheight = fontheight;
+                        if (linemarginy < marginy) linemarginy = marginy;
                     }
 
                 y += linefontheight + linemarginy;
 
                 // draw all text blocks in succession
                 foreach (var span in Spans)
-                    if (span != null && span.TextBlock != null)
+                    if (span != null)
                     {
 
-                        var text = span.TextBlock;
-                        var childlines = text.GetLines(width, linewidth, false);
+                        var childlines = span.GetLines(width, linewidth, false);
 
-                        var childlinecount = childlines.Count;
-                        for (var i = 0; i < childlinecount; i++)
+                        if (childlines != null)
                         {
 
-                            var wordspan = childlines[i];
-                            line.Add((span, wordspan));
+                            var childlinecount = childlines.Count;
+                            for (var i = 0; i < childlinecount; i++)
+                            {
 
-                            linewidth += wordspan.width;
-                            if (maxlinewidth < linewidth)
-                                maxlinewidth = linewidth;
+                                var wordspan = childlines[i];
+                                line.Add((span, wordspan));
 
-                            if (i != childlinecount - 1)
-                                // text returned multiple lines, lay a line out for all that aren't the last
-                                LayoutLine();
-                            //else
-                              //  if (wordspan.glyphend == -1)
-                                //LayoutLine(); // finish the line if the lines end with a line break;
+                                linewidth += wordspan.width;
+                                if (maxlinewidth < linewidth)
+                                    maxlinewidth = linewidth;
+
+                                if (i != childlinecount - 1)
+                                    LayoutLine();
+
+                            }
 
                         }
-
                     }
 
                 if (line.Count > 0)
@@ -191,12 +187,10 @@ namespace SkiaSharp.TextBlocks
                                 x = (float)Math.Round(x);
 
                             var span = chunk.span;
-                            var text = span.TextBlock;
                             var spanwidth = chunk.wordspan.width;
-                            var t = span.Translate;
 
                             // draw the span
-                            canvas.DrawGlyphSpan(text.GlyphSpan, x + t.X, y + t.Y, text.Color, chunk.wordspan);
+                            span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, false);
 
 #if DEBUGCONTAINER
                             var paintrect = new SKRect(x + t.X, y - text.FontHeight - text.MarginY + t.Y, x + spanwidth + t.X, y + text.MarginY + t.Y);
@@ -216,9 +210,7 @@ namespace SkiaSharp.TextBlocks
                         {
 
                             var span = chunk.span;
-                            var text = span.TextBlock;
                             var spanwidth = chunk.wordspan.width;
-                            var t = span.Translate;
 
                             if (PixelRounding)
                                 x = (float)Math.Round(x);
@@ -226,7 +218,7 @@ namespace SkiaSharp.TextBlocks
                             x -= spanwidth;
 
                             // draw the span
-                            canvas.DrawGlyphSpan(text.GlyphSpan, x - t.X, y + t.Y, text.Color, chunk.wordspan);
+                            span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, true);
 
 #if DEBUGCONTAINER
                             var paintrect = new SKRect(x - t.X, y - text.FontHeight - text.MarginY + t.Y, x + spanwidth - t.X, y + text.MarginY + t.Y);

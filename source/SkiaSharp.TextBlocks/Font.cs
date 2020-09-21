@@ -45,7 +45,7 @@ namespace SkiaSharp.TextBlocks
 
         public static Font FromPaint(SKPaint paint) => new Font(paint.Typeface?.FamilyName, paint.TextSize, paint.Typeface?.IsBold ?? paint.FakeBoldText);
         public Font WithTextSize(float textSize) => new Font(this) { TextSize = textSize };
-//        public Font WithBold(bool bold) => new Font(this) { FontStyle = SKFontStyle.Bold };
+        public Font WithBold(float factor) => new Font(this) { FontStyle = new SKFontStyle((int)(FontStyle.Weight * factor), FontStyle.Width, FontStyle.Slant) };
 
         public override bool Equals(object obj) => obj is Font font && Name == font.Name && TextSize == font.TextSize && FontStyle.Weight == font.FontStyle.Weight && FontStyle.Width == font.FontStyle.Width && FontStyle.Slant == font.FontStyle.Slant;
 
