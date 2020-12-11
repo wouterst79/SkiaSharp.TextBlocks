@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace SkiaSharp.TextBlocks
@@ -57,7 +58,10 @@ namespace SkiaSharp.TextBlocks
 
         public void DrawMeasuredSpan(SKCanvas canvas, float x, float y, float fontheight, float marginy, MeasuredSpan measuredSpan, bool isrtl)
         {
-            canvas.DrawGlyphSpan(TextBlock.GlyphSpan, x + Translate.X, y + Translate.Y, TextBlock.Color, measuredSpan);
+            if (isrtl)
+                canvas.DrawGlyphSpan(TextBlock.GlyphSpan, x - Translate.X, y + Translate.Y, TextBlock.Color, measuredSpan);
+            else
+                canvas.DrawGlyphSpan(TextBlock.GlyphSpan, x + Translate.X, y + Translate.Y, TextBlock.Color, measuredSpan);
         }
 
     }
@@ -75,7 +79,7 @@ namespace SkiaSharp.TextBlocks
             var size = GetSize(textShaper);
             Width = size.Width;
             Height = size.Height;
-            return (0, 0);
+            return (Height, 0);
         }
 
         public List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)

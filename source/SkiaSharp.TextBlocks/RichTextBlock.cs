@@ -21,13 +21,16 @@ namespace SkiaSharp.TextBlocks
         /// but may not be the best option if certain translations are applied to the canvas.
         /// Default is true.
         /// </summary>
-        public bool PixelRounding = true;
+        public bool PixelRounding = false;
 
         /// <summary>
         /// The contents of the rich text block
         /// </summary>
         public List<RichTextSpan> Spans = new List<RichTextSpan>();
 
+
+        public int MaxLines = int.MaxValue;
+        public LineAlignment LineAlignment = LineAlignment.Near;
 
         private const float floatroundingmargin = 0.01f;
 
@@ -117,6 +120,8 @@ namespace SkiaSharp.TextBlocks
             var maxlinewidth = 0.0f;
             var y = rect.Top;
 
+            var maxlines = MaxLines;
+
             if (Spans != null)
             {
 
@@ -153,11 +158,17 @@ namespace SkiaSharp.TextBlocks
                                     maxlinewidth = linewidth;
 
                                 if (i != childlinecount - 1)
+                                {
                                     LayoutLine();
+                                    if (maxlines <= 0) break;
+                                }
 
                             }
 
                         }
+
+                        if (maxlines <= 0) break;
+
                     }
 
                 if (line.Count > 0)
@@ -180,6 +191,8 @@ namespace SkiaSharp.TextBlocks
                     if (flowDirection == FlowDirection.LeftToRight)
                     {
                         var x = rect.Left;
+                        if (LineAlignment == LineAlignment.Far) x += rect.Width - linewidth;
+                        if (LineAlignment == LineAlignment.Center) x += (rect.Width - linewidth) / 2;
                         foreach (var chunk in line)
                         {
 
@@ -193,7 +206,7 @@ namespace SkiaSharp.TextBlocks
                             span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, false);
 
 #if DEBUGCONTAINER
-                            var paintrect = new SKRect(x + t.X, y - text.FontHeight - text.MarginY + t.Y, x + spanwidth + t.X, y + text.MarginY + t.Y);
+                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
                             using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
                                 canvas.DrawRect(paintrect, borderpaint);
 #endif
@@ -206,6 +219,8 @@ namespace SkiaSharp.TextBlocks
                     {
 
                         var x = rect.Right;
+                        if (LineAlignment == LineAlignment.Far) x -= rect.Width - linewidth;
+                        if (LineAlignment == LineAlignment.Center) x -= (rect.Width - linewidth) / 2;
                         foreach (var chunk in line)
                         {
 
@@ -221,7 +236,7 @@ namespace SkiaSharp.TextBlocks
                             span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, true);
 
 #if DEBUGCONTAINER
-                            var paintrect = new SKRect(x - t.X, y - text.FontHeight - text.MarginY + t.Y, x + spanwidth - t.X, y + text.MarginY + t.Y);
+                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
                             using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
                                 canvas.DrawRect(paintrect, borderpaint);
 #endif
@@ -234,6 +249,8 @@ namespace SkiaSharp.TextBlocks
                 y += linefontheight + linemarginy * 2;
 
                 line.Clear();
+
+                maxlines--;
 
             }
         }
