@@ -79,7 +79,7 @@ namespace SkiaSharp.TextBlocks
             var size = GetSize(textShaper);
             Width = size.Width;
             Height = size.Height;
-            return (Height, 0);
+            return (0, 0);
         }
 
         public List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)
