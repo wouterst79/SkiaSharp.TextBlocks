@@ -20,6 +20,8 @@ namespace SkiaSharp.TextBlocks
         public SKFontStyle FontStyle;
         public float? LineHeight;
 
+        public SKTypeface Typeface;
+
         public Font(float textSize, bool bold = false) : this(null, textSize, bold)
         {
         }
@@ -77,8 +79,20 @@ namespace SkiaSharp.TextBlocks
 
                 var ch = text[i];
 
-                SKTypeface typeface;
-                if (char.IsSurrogate(ch) && text.Length > i + 1 && char.IsSurrogatePair(ch, text[i + 1]))
+                SKTypeface typeface = Typeface;
+                if (typeface != null)
+                {
+
+                    var idx = (byte)typefaces.IndexOf(typeface);
+                    if (idx == 255)
+                    {
+                        typefaces.Add(typeface);
+                        idx = (byte)(typefaces.Count - 1);
+                    }
+                    ids[i] = idx;
+
+                }
+                else if (char.IsSurrogate(ch) && text.Length > i + 1 && char.IsSurrogatePair(ch, text[i + 1]))
                 {
 
                     // handle surrogates

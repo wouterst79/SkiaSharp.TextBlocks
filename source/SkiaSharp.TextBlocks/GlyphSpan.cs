@@ -256,20 +256,10 @@ namespace SkiaSharp.TextBlocks
                 var paint = Paints[paintid];
                 paint.Color = color;
 
-
                 var builder = new SKTextBlobBuilder();
                 builder.AddPositionedRun(pos, paint.ToFont(), PaintPoints.AsSpan(0, len));
                 using (var textBlob = builder.Build())
                     canvas.DrawText(textBlob, 0, 0, paint);
-
-                //    using var blob = SKTextBlob.CreatePositioned(.CreatePositioned(text, paint.GetFont(), points);
-                //if (blob == null)
-                //    return;
-
-                //var tb = SKTextBlob.Create(() 
-                //canvas.DrawText()
-                //canvas.DrawPositionedText(ptr, len * 2, PaintPoints, paint);
-
 
             }
         }
