@@ -28,10 +28,10 @@ namespace SkiaSharp.TextBlocks
         //                               |   first glyph:[0]
         //                               last glyph: [4] 
         // 
-        // glyph               15            0
-        // StartPoints.Index   0             15
+        // glyph               14            0
+        // StartPoints.Index   0             14
         // StartPoints.x:    -100            0
-        // codepoints.Index    0             30
+        // codepoints.Index    0             14
         //                              
         private readonly ushort[] Codepoints; // due to the way HarfBuzz works, these are always LTR. 2 bytes per glyph
         private readonly byte[] PaintIDs;

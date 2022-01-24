@@ -1,3 +1,22 @@
+## Typeface Detection
+Rtl Support Test 1:
+
+![Typeface_Detection-Rtl_Support_Test_1](./samples/output/Typeface_Detection-Rtl_Support_Test_1.png)
+
+```C#
+var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
+```
+
+Rtl Support Test 2:
+
+![Typeface_Detection-Rtl_Support_Test_2](./samples/output/Typeface_Detection-Rtl_Support_Test_2.png)
+
+```C#
+var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
+```
+
 ## Basic Samples
 Hello World:
 

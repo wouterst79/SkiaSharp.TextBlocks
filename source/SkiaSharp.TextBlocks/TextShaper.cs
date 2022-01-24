@@ -155,7 +155,7 @@ namespace SkiaSharp.TextBlocks
             var startpointlength = text.Length + 1; // default point buffer length
             var startpoints = new SKPoint[startpointlength];
             var paintids = new byte[startpointlength];
-            var codepoints = new ushort[startpointlength * 2];
+            var codepoints = new ushort[startpointlength];
             var glyphcount = 0;
 
             var words = new List<(int startglyph, int endglyph, WordType type)>();
@@ -304,9 +304,7 @@ namespace SkiaSharp.TextBlocks
                         var cp = idx - len + i;
                         var glyph = glyphcount + i;
 
-                        var bytes = BitConverter.GetBytes((ushort)info[i].Codepoint);
-                        codepoints[cp * 2] = bytes[0];
-                        codepoints[cp * 2 + 1] = bytes[1];
+                        codepoints[cp] = (ushort)info[i].Codepoint;
 
                         // move the cursor
                         x -= pos[i].XAdvance * scalex;

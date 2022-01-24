@@ -17,8 +17,30 @@ namespace SkiaSharp.TextBlocks.Samples
             Directory.CreateDirectory(outputfolder);
 
 
+
             var markdown = new StringBuilder();
 
+
+
+            // font detection
+            new TextBlockSample(outputfolder, "Typeface Detection", markdown)
+
+                .Paint("Rtl Support Test 1", 200, (canvas) =>
+                {
+                    var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا بالعالم");
+                    //var text = new TextBlock(new Font(14), SKColors.Black, "مرحبا");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.LeftToRight);
+                }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""مرحبا بالعالم"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);")
+
+                .Paint("Rtl Support Test 2", 200, (canvas) =>
+                {
+                    var text = new TextBlock(new Font(14), SKColors.Black, "年či↺🚀مر");
+                    return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);
+                }, @"var text = new TextBlock(new Font(14), SKColors.Black, ""مرحبا بالعالم"");
+return canvas.DrawTextBlock(text, new SKRect(0, 0, 100, 0), null, FlowDirection.RightToLeft);")
+
+                ;
 
             // basic samples
             new TextBlockSample(outputfolder, "Basic Samples", markdown)
