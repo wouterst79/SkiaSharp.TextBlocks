@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Globalization;
+using System.Collections.Concurrent;
 
 namespace SkiaSharp.TextBlocks
 {
@@ -32,8 +33,8 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public int Scale = 1;
 
-        public Dictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
-        public Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
+        public ConcurrentDictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
+        public ConcurrentDictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
 
         /// <summary>
         /// Use the shared font manager (and don't dispose cached typefaces).
@@ -50,8 +51,8 @@ namespace SkiaSharp.TextBlocks
         {
             if (usechache)
             {
-                TypeShaperCache = new Dictionary<SKTypeface, TypefaceTextShaper>();
-                GlyphSpanCache = new Dictionary<(Font font, string text), GlyphSpan>();
+                TypeShaperCache = new ConcurrentDictionary<SKTypeface, TypefaceTextShaper>();
+                GlyphSpanCache = new ConcurrentDictionary<(Font font, string text), GlyphSpan>();
 
                 if (!UseSharedFontManagerWhenCaching)
                     FontManager = SKFontManager.CreateDefault();
@@ -127,7 +128,7 @@ namespace SkiaSharp.TextBlocks
                 return new TypefaceTextShaper(typeface);
 
             if (!TypeShaperCache.TryGetValue(typeface, out var shaper))
-                TypeShaperCache.Add(typeface, shaper = new TypefaceTextShaper(typeface));
+                TypeShaperCache[typeface] = shaper = new TypefaceTextShaper(typeface);
 
             return shaper;
 
