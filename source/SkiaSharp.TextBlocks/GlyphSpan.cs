@@ -193,17 +193,20 @@ namespace SkiaSharp.TextBlocks
                 var sp = StartPoints[idx];
                 points[0] = animation.Transpose(g, GlyphCount, new SKPoint(deltax + sp.X, sp.Y + y));
                 paint.Color = animation.GetColor == null ? color : animation.GetColor(g, GlyphCount);
+                if (animation.UpdatePaint != null) animation.UpdatePaint(g, GlyphCount, paint, false);
 
                 var builder = new SKTextBlobBuilder();
                 builder.AddPositionedRun(Codepoints.AsSpan(g, 1), paint.ToFont(), points.AsSpan());
                 using (var textBlob = builder.Build())
                     canvas.DrawText(textBlob, 0, 0, paint);
 
+                if (animation.UpdatePaint != null) animation.UpdatePaint(g, GlyphCount, paint, true);
+
             }
 
         }
 
-        public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color)
+        public void PaintBlocks(SKCanvas canvas, int firstglyph, int lastglyph, float x, float y, SKColor color, Action<SKPaint, bool> updatePaint = null)
         {
 
             var pointstart = (ReadDirection == FlowDirection.LeftToRight) ? firstglyph : StartPoints.Length - lastglyph - 2;
@@ -255,11 +258,14 @@ namespace SkiaSharp.TextBlocks
 
                 var paint = Paints[paintid];
                 paint.Color = color;
+                if (updatePaint != null) updatePaint(paint, false);
 
                 var builder = new SKTextBlobBuilder();
                 builder.AddPositionedRun(pos, paint.ToFont(), PaintPoints.AsSpan(0, len));
                 using (var textBlob = builder.Build())
                     canvas.DrawText(textBlob, 0, 0, paint);
+
+                if (updatePaint != null) updatePaint(paint, true);
 
             }
         }

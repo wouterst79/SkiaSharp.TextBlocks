@@ -14,7 +14,7 @@ namespace SkiaSharp.TextBlocks
         /// <param name="x">Left coordinate</param>
         /// <param name="y">Bottom coordinate of the text baseline</param>
         /// <param name="measuredSpan"></param>
-        public static void DrawGlyphSpan(this SKCanvas canvas, GlyphSpan glyphSpan, float x, float y, SKColor color, MeasuredSpan measuredSpan, GlyphAnimation glyphAnimation = null)
+        public static void DrawGlyphSpan(this SKCanvas canvas, GlyphSpan glyphSpan, float x, float y, SKColor color, MeasuredSpan measuredSpan, GlyphAnimation glyphAnimation = null, Action<SKPaint, bool> updatePaint = null)
         {
 
             if (canvas == null)
@@ -31,7 +31,7 @@ namespace SkiaSharp.TextBlocks
 
             // paint the "substring" blocks
             if (glyphAnimation == null)
-                glyphSpan.PaintBlocks(canvas, measuredSpan.glyphstart, measuredSpan.glyphend, x, y, color);
+                glyphSpan.PaintBlocks(canvas, measuredSpan.glyphstart, measuredSpan.glyphend, x, y, color, updatePaint);
             else
                 glyphSpan.PaintBlocks(canvas, measuredSpan.glyphstart, measuredSpan.glyphend, x, y, color, glyphAnimation);
 

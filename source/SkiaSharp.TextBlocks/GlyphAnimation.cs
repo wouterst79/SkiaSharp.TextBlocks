@@ -10,6 +10,7 @@ namespace SkiaSharp.TextBlocks
         // glyph, glyphcount, original, transposed
         public Func<int, int, SKPoint, SKPoint> Transpose;
         public Func<int, int, SKColor> GetColor;
+        public Action<int, int, SKPaint, bool> UpdatePaint;
 
     }
 }

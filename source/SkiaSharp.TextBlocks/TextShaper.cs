@@ -33,9 +33,9 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         public int Scale = 1;
 
-        private static object CacheLock = new object();
-        public Dictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
-        public Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
+        private object CacheLock = new object();
+        private Dictionary<SKTypeface, TypefaceTextShaper> TypeShaperCache;
+        private Dictionary<(Font font, string text), GlyphSpan> GlyphSpanCache;
 
         /// <summary>
         /// Use the shared font manager (and don't dispose cached typefaces).
