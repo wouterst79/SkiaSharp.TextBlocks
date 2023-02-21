@@ -12,6 +12,8 @@ namespace SkiaSharp.TextBlocks
     public class TextBlock
     {
 
+        private static ListPool<MeasuredSpan> ListCache = new ListPool<MeasuredSpan>();
+
         public readonly Font Font;
         public SKColor Color;
         public readonly string Text;
@@ -103,22 +105,35 @@ namespace SkiaSharp.TextBlocks
         /// <param name="textShaper">Text Shaper (measurement cache) to use, or null if measurements shouldn't be cached in memory</param>
         public SKSize Measure(float maxwidth, TextShaper textShaper = null)
         {
-            float width = 0;
-            LoadMeasures(textShaper);
-            if (LineBreakMode == LineBreakMode.MiddleTruncation)
+
+            var lines = ListCache.Get();
+
+            try
             {
-                var spans = GetSpans(maxwidth);
-                foreach (var span in spans)
-                    width += span.width;
-                return new SKSize(width, LineHeight);
+
+                float width = 0;
+                LoadMeasures(textShaper);
+                if (LineBreakMode == LineBreakMode.MiddleTruncation)
+                {
+                    GetSpans(lines, maxwidth);
+                    foreach (var span in lines)
+                        width += span.width;
+                    return new SKSize(width, LineHeight);
+                }
+                else
+                {
+                    GetLines(lines, maxwidth);
+                    foreach (var line in lines)
+                        if (width < line.width) width = line.width;
+                    return new SKSize(width, lines.Count * LineHeight);
+                }
+
             }
-            else
+            finally
             {
-                var lines = GetLines(maxwidth);
-                foreach (var line in lines)
-                    if (width < line.width) width = line.width;
-                return new SKSize(width, lines.Count * LineHeight);
+                ListCache.Return(lines);
             }
+
         }
 
 
@@ -126,80 +141,85 @@ namespace SkiaSharp.TextBlocks
         public SKRect Draw(SKCanvas canvas, SKRect rect, TextShaper textShaper = null, FlowDirection flowDirection = FlowDirection.LeftToRight)
         {
 
-            LoadMeasures(textShaper);
+            var lines = ListCache.Get();
 
-            var y = rect.Top + FontHeight + MarginY;
-
-            if (LineBreakMode == LineBreakMode.MiddleTruncation)
-            {
-                var spans = GetSpans(rect.Width);
-                if (flowDirection == FlowDirection.LeftToRight)
-                {
-                    var x = rect.Left;
-                    if (spans.Count > 0)
-                    {
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, spans[0]);
-                        x += spans[0].width;
-                    }
-                    if (spans.Count > 1)
-                    {
-                        canvas.DrawGlyphSpan(EllipsisGlyphSpan, x, y, Color, spans[1]);
-                        x += spans[1].width;
-                    }
-                    if (spans.Count > 2)
-                    {
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, spans[2]);
-                    }
-                }
-                else
-                {
-                    var x = rect.Right;
-                    if (spans.Count > 0)
-                    {
-                        x -= spans[0].width;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, spans[0]);
-                    }
-                    if (spans.Count > 1)
-                    {
-                        x -= spans[1].width;
-                        canvas.DrawGlyphSpan(EllipsisGlyphSpan, x, y, Color, spans[1]);
-                    }
-                    if (spans.Count > 2)
-                    {
-                        x -= spans[2].width;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, spans[2]);
-                    }
-                }
-                y += LineHeight;
-            }
-            else
+            try
             {
 
-                var lines = GetLines(rect.Width);
-                var i = 0;
-                foreach (var line in lines)
+                LoadMeasures(textShaper);
+
+                var y = rect.Top + FontHeight + MarginY;
+
+                if (LineBreakMode == LineBreakMode.MiddleTruncation)
                 {
-                    if (GetLineColor != null) Color = GetLineColor(i++, lines.Count);
-                    if (LineBreakMode == LineBreakMode.WordWrap)
+                    GetSpans(lines, rect.Width);
+                    if (flowDirection == FlowDirection.LeftToRight)
                     {
-                        float x;
-                        if (flowDirection == FlowDirection.LeftToRight)
-                            x = rect.Left;
-                        else
-                            x = rect.Right - line.width;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
+                        var x = rect.Left;
+                        if (lines.Count > 0)
+                        {
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, lines[0]);
+                            x += lines[0].width;
+                        }
+                        if (lines.Count > 1)
+                        {
+                            canvas.DrawGlyphSpan(EllipsisGlyphSpan, x, y, Color, lines[1]);
+                            x += lines[1].width;
+                        }
+                        if (lines.Count > 2)
+                        {
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, lines[2]);
+                        }
                     }
-                    else if (LineBreakMode == LineBreakMode.Center)
+                    else
                     {
-                        var x = rect.Left + (rect.Width - line.width) / 2;
-                        canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
+                        var x = rect.Right;
+                        if (lines.Count > 0)
+                        {
+                            x -= lines[0].width;
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, lines[0]);
+                        }
+                        if (lines.Count > 1)
+                        {
+                            x -= lines[1].width;
+                            canvas.DrawGlyphSpan(EllipsisGlyphSpan, x, y, Color, lines[1]);
+                        }
+                        if (lines.Count > 2)
+                        {
+                            x -= lines[2].width;
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, lines[2]);
+                        }
                     }
                     y += LineHeight;
                 }
+                else
+                {
 
-            }
+                    GetLines(lines, rect.Width);
+                    var i = 0;
+                    foreach (var line in lines)
+                    {
+                        if (GetLineColor != null) Color = GetLineColor(i++, lines.Count);
+                        if (LineBreakMode == LineBreakMode.WordWrap)
+                        {
+                            float x;
+                            if (flowDirection == FlowDirection.LeftToRight)
+                                x = rect.Left;
+                            else
+                                x = rect.Right - line.width;
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
+                        }
+                        else if (LineBreakMode == LineBreakMode.Center)
+                        {
+                            var x = rect.Left + (rect.Width - line.width) / 2;
+                            canvas.DrawGlyphSpan(GlyphSpan, x, y, Color, line, GlyphAnimation);
+                        }
+                        y += LineHeight;
+                    }
 
-            var paintrect = new SKRect(rect.Left, rect.Top, rect.Right, y - LineHeight + MarginY);
+                }
+
+                var paintrect = new SKRect(rect.Left, rect.Top, rect.Right, y - LineHeight + MarginY);
 
 #if DEBUGCONTAINER
             if (canvas != null)
@@ -207,7 +227,13 @@ namespace SkiaSharp.TextBlocks
                     canvas.DrawRect(paintrect, borderpaint);
 #endif
 
-            return paintrect;
+                return paintrect;
+
+            }
+            finally
+            {
+                ListCache.Return(lines);
+            }
 
         }
 
@@ -226,9 +252,9 @@ namespace SkiaSharp.TextBlocks
 
                 GlyphSpan = textShaper.GetGlyphSpan(Font, Text);
 
-                var fontMetrics = GlyphSpan.Paints[0].FontMetrics;
+                var fontMetrics = GlyphSpan.Paint.FontMetrics;
                 FontHeight = fontMetrics.CapHeight;
-                if (Font.LineHeight.HasValue) 
+                if (Font.LineHeight.HasValue)
                     LineHeight = Font.LineHeight.Value;
                 else
                     LineHeight = (fontMetrics.Descent - fontMetrics.Ascent + fontMetrics.Leading) * LineSpacing;
@@ -257,7 +283,7 @@ namespace SkiaSharp.TextBlocks
         /// <summary>
         /// Get spans for single line line break modes.
         /// </summary>
-        public List<MeasuredSpan> GetSpans(float width)
+        public void GetSpans(List<MeasuredSpan> result, float width)
         {
 
             if (LineBreakMode != LineBreakMode.MiddleTruncation)
@@ -267,7 +293,6 @@ namespace SkiaSharp.TextBlocks
 
             var l = GlyphSpan.GlyphCount - 1;
 
-            var result = new List<MeasuredSpan>();
             var full = GlyphSpan.Measure(0, l);
             if (full.width <= width)
                 // whole line fits
@@ -277,7 +302,7 @@ namespace SkiaSharp.TextBlocks
 
                 var elspan = EllipsisGlyphSpan.Measure(0, 2);
                 if (elspan.width > width)
-                    return result;
+                    return;
 
                 for (var chars = l; chars > 0; chars--)
                 {
@@ -296,14 +321,12 @@ namespace SkiaSharp.TextBlocks
                         result.Add(startspan);
                         result.Add(elspan);
                         result.Add(endspan);
-                        return result;
+                        return;
                     }
 
                 }
 
             }
-
-            return result;
 
         }
 
@@ -313,12 +336,10 @@ namespace SkiaSharp.TextBlocks
         /// </summary>
         /// <param name="firstlinestart">The start position for the first line, useful when concatenating multiple textblocks</param>
         /// <param name="trimtrailingwhitespace">True to trim trailing whitespaces, use false when concatenating multiple textblocks</param>
-        public List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart = 0, bool trimtrailingwhitespace = true)
+        public void GetLines(List<MeasuredSpan> result, float maximumwidth, float firstlinestart = 0, bool trimtrailingwhitespace = true)
         {
 
             AssertGlyphSpan();
-
-            var result = new List<MeasuredSpan>();
 
             if (LineBreakMode == LineBreakMode.MiddleTruncation)
                 throw new ArgumentOutOfRangeException("GetLines is not supported for this LineBreakMode");
@@ -342,16 +363,16 @@ namespace SkiaSharp.TextBlocks
                         {
                             // all words fit
                             result.Add(size);
-                            if (result.Count == MaxLines) return result;
+                            if (result.Count == MaxLines) return;
                             if (word.type == WordType.Linebreak) // trailing linebreaks get an extra line
                                 result.Add(new MeasuredSpan(0, -1, -2, 0));
-                            return result;
+                            return;
                         }
                         else if (word.type == WordType.Linebreak)
                         {
                             // line breaks force a line
                             result.Add(size);
-                            if (result.Count == MaxLines) return result;
+                            if (result.Count == MaxLines) return;
                             s = e + 1;
                             linestart = 0;
                         }
@@ -364,7 +385,7 @@ namespace SkiaSharp.TextBlocks
                                 // one full, or multiple whole words
                                 size = GlyphSpan.MeasureWordSpan(s, e - 1, trimtrailingwhitespace);
                                 result.Add(size);
-                                if (result.Count == MaxLines) return result;
+                                if (result.Count == MaxLines) return;
                                 s = e - 1;
                                 linestart = 0;
                                 break;
@@ -407,7 +428,7 @@ namespace SkiaSharp.TextBlocks
                                                 }
 
                                                 result.Add(size);
-                                                if (result.Count == MaxLines) return result;
+                                                if (result.Count == MaxLines) return;
                                                 gs = ge + 1;
                                                 more = gs <= word.lastglyph;
                                                 break;
@@ -437,8 +458,6 @@ namespace SkiaSharp.TextBlocks
                     }
                 }
             }
-
-            return result;
 
         }
 

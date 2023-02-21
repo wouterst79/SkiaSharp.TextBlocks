@@ -105,21 +105,22 @@ namespace SkiaSharp.TextBlocks
                 var (typefaces, ids) = font.GetTypefaces(text, FontManager);
                 var typefacecount = typefaces.Length;
                 var shapers = new TypefaceTextShaper[typefacecount];
-                var paints = new SKPaint[typefacecount];
+                var fonts = new SKFont[typefacecount];
+                var paint = new SKPaint()
+                {
+                    TextSize = font.TextSize * Scale,
+                    TextEncoding = SKTextEncoding.GlyphId,
+                    IsAntialias = IsAntiAlias,
+                };
 
                 for (int i = 0; i < typefaces.Length; i++)
                 {
                     shapers[i] = GetFontShaper(typefaces[i]);
-                    paints[i] = new SKPaint()
-                    {
-                        TextSize = font.TextSize * Scale,
-                        Typeface = typefaces[i],
-                        TextEncoding = SKTextEncoding.GlyphId,
-                        IsAntialias = IsAntiAlias,
-                    };
+                    paint.Typeface = typefaces[i];
+                    fonts[i] = paint.ToFont();
                 }
 
-                shape = Shape(typefaces, shapers, paints, text, ids);
+                shape = Shape(paint, shapers, fonts, text, ids);
 
                 if (GlyphSpanCache != null)
                     lock (CacheLock)
@@ -154,17 +155,15 @@ namespace SkiaSharp.TextBlocks
         /// <summary>
         /// Break a string into words, and then uses HarfBuzzSharp to convert them into glyphs, and glyph coordinates.
         /// </summary>
-        public GlyphSpan Shape(SKTypeface[] typefaces, TypefaceTextShaper[] shapers, SKPaint[] paints, string text, byte[] typefaceids)
+        public GlyphSpan Shape(SKPaint paint, TypefaceTextShaper[] shapers, SKFont[] fonts, string text, byte[] typefaceids)
         {
 
             if (string.IsNullOrEmpty(text))
-                return new GlyphSpan(paints);
-
-            var firstpaint = paints[0];
+                return new GlyphSpan(paint, fonts);
 
             // get the sizes
-            float scaley = firstpaint.TextSize / TypefaceTextShaper.FONT_SIZE_SCALE;
-            float scalex = scaley * firstpaint.TextScaleX;
+            float scaley = paint.TextSize / TypefaceTextShaper.FONT_SIZE_SCALE;
+            float scalex = scaley * paint.TextScaleX;
 
             // prepare the output buffers
             HBBuffer buffer;
@@ -234,7 +233,7 @@ namespace SkiaSharp.TextBlocks
 
             }
 
-            return new GlyphSpan(paints, direction, paintids, codepoints, startpoints, glyphcount, words);
+            return new GlyphSpan(paint, fonts, direction, paintids, codepoints, startpoints, glyphcount, words);
 
             void ShapeSpan(byte typefaceid)
             {

@@ -11,7 +11,7 @@ namespace SkiaSharp.TextBlocks
 
         (float FontHeight, float MarginY) GetMeasures(TextShaper textShaper);
 
-        List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart, bool trimtrailingwhitespace);
+        void GetLines(List<MeasuredSpan> lines, float maximumwidth, float firstlinestart, bool trimtrailingwhitespace);
 
         void DrawMeasuredSpan(SKCanvas canvas, float x, float y, float fontheight, float marginy, MeasuredSpan measuredSpan, bool isrtl);
 
@@ -22,6 +22,8 @@ namespace SkiaSharp.TextBlocks
     /// </summary>
     public class TextBlockSpan : RichTextSpan
     {
+
+        //private static ListCache<MeasuredSpan> ListCache = new ListCache<MeasuredSpan>();
 
         /// <summary>
         /// The text to print
@@ -51,9 +53,9 @@ namespace SkiaSharp.TextBlocks
             return (TextBlock.FontHeight, TextBlock.MarginY);
         }
 
-        public List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)
+        public void GetLines(List<MeasuredSpan> lines, float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)
         {
-            return TextBlock.GetLines(maximumwidth, firstlinestart, trimtrailingwhitespace);
+            TextBlock.GetLines(lines, maximumwidth, firstlinestart, trimtrailingwhitespace);
         }
 
         public void DrawMeasuredSpan(SKCanvas canvas, float x, float y, float fontheight, float marginy, MeasuredSpan measuredSpan, bool isrtl)
@@ -82,9 +84,9 @@ namespace SkiaSharp.TextBlocks
             return (0, 0);
         }
 
-        public List<MeasuredSpan> GetLines(float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)
+        public void GetLines(List<MeasuredSpan> lines, float maximumwidth, float firstlinestart, bool trimtrailingwhitespace)
         {
-            return new List<MeasuredSpan>() { new MeasuredSpan(0, 0, 0, Width) };
+            lines.Add(new MeasuredSpan(0, 0, 0, Width));
         }
 
         public abstract void DrawMeasuredSpan(SKCanvas canvas, float x, float y, float fontheight, float marginy, MeasuredSpan measuredSpan, bool isrtl);

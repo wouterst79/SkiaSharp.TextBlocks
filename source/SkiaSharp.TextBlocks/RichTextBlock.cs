@@ -15,6 +15,9 @@ namespace SkiaSharp.TextBlocks
     public class RichTextBlock
     {
 
+        private static ListPool<(RichTextSpan span, MeasuredSpan wordspan)> LayoutPool = new ListPool<(RichTextSpan span, MeasuredSpan wordspan)>();
+        private static ListPool<MeasuredSpan> LinePool = new ListPool<MeasuredSpan>();
+
         /// <summary>
         /// Set to true if text should be aligned on the pixel grid.
         /// This will make text look less "jumpy" if the same text is moved on the canvas,
@@ -111,40 +114,42 @@ namespace SkiaSharp.TextBlocks
 
             var width = rect.Width;
 
-            var line = new List<(RichTextSpan span, MeasuredSpan wordspan)>();
-            var linewidth = 0.0f;
+            var line = LayoutPool.Get();
+            var childlines = LinePool.Get();
 
-            var linefontheight = 0f;
-            var linemarginy = 0f;
-
-            var maxlinewidth = 0.0f;
-            var y = rect.Top;
-
-            var maxlines = MaxLines;
-
-            if (Spans != null)
+            try
             {
 
-                // calculate maximum font dimensions
-                foreach (var span in Spans)
-                    if (span != null)
-                    {
-                        var (fontheight, marginy) = span.GetMeasures(textShaper);
-                        if (linefontheight < fontheight) linefontheight = fontheight;
-                        if (linemarginy < marginy) linemarginy = marginy;
-                    }
+                var linewidth = 0.0f;
 
-                y += linefontheight + linemarginy;
+                var linefontheight = 0f;
+                var linemarginy = 0f;
 
-                // draw all text blocks in succession
-                foreach (var span in Spans)
-                    if (span != null)
-                    {
+                var maxlinewidth = 0.0f;
+                var y = rect.Top;
 
-                        var childlines = span.GetLines(width, linewidth, false);
+                var maxlines = MaxLines;
 
-                        if (childlines != null)
+                if (Spans != null)
+                {
+
+                    // calculate maximum font dimensions
+                    foreach (var span in Spans)
+                        if (span != null)
                         {
+                            var (fontheight, marginy) = span.GetMeasures(textShaper);
+                            if (linefontheight < fontheight) linefontheight = fontheight;
+                            if (linemarginy < marginy) linemarginy = marginy;
+                        }
+
+                    y += linefontheight + linemarginy;
+
+                    // draw all text blocks in succession
+                    foreach (var span in Spans)
+                        if (span != null)
+                        {
+
+                            span.GetLines(childlines, width, linewidth, false);
 
                             var childlinecount = childlines.Count;
                             for (var i = 0; i < childlinecount; i++)
@@ -165,94 +170,101 @@ namespace SkiaSharp.TextBlocks
 
                             }
 
+                            if (maxlines <= 0) break;
+
                         }
 
-                        if (maxlines <= 0) break;
+                    if (line.Count > 0)
+                        LayoutLine();
 
-                    }
+                    y -= linefontheight + linemarginy;
 
-                if (line.Count > 0)
-                    LayoutLine();
+                }
 
-                y -= linefontheight + linemarginy;
+                if (flowDirection == FlowDirection.Unknown || flowDirection == FlowDirection.LeftToRight)
+                    return new SKRect(rect.Left, rect.Top, rect.Left + maxlinewidth + floatroundingmargin, y);
+                else
+                    return new SKRect(rect.Right - maxlinewidth - floatroundingmargin, rect.Top, rect.Right, y);
+
+
+                void LayoutLine()
+                {
+
+                    if (canvas != null)
+
+                        if (flowDirection == FlowDirection.LeftToRight)
+                        {
+                            var x = rect.Left;
+                            if (LineAlignment == LineAlignment.Far) x += rect.Width - linewidth;
+                            if (LineAlignment == LineAlignment.Center) x += (rect.Width - linewidth) / 2;
+                            foreach (var chunk in line)
+                            {
+
+                                if (PixelRounding)
+                                    x = (float)Math.Round(x);
+
+                                var span = chunk.span;
+                                var spanwidth = chunk.wordspan.width;
+
+                                // draw the span
+                                span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, false);
+
+#if DEBUGCONTAINER
+                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
+                            using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
+                                canvas.DrawRect(paintrect, borderpaint);
+#endif
+
+                                x += spanwidth;
+
+                            }
+                        }
+                        else
+                        {
+
+                            var x = rect.Right;
+                            if (LineAlignment == LineAlignment.Far) x -= rect.Width - linewidth;
+                            if (LineAlignment == LineAlignment.Center) x -= (rect.Width - linewidth) / 2;
+                            foreach (var chunk in line)
+                            {
+
+                                var span = chunk.span;
+                                var spanwidth = chunk.wordspan.width;
+
+                                if (PixelRounding)
+                                    x = (float)Math.Round(x);
+
+                                x -= spanwidth;
+
+                                // draw the span
+                                span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, true);
+
+#if DEBUGCONTAINER
+                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
+                            using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
+                                canvas.DrawRect(paintrect, borderpaint);
+#endif
+
+                            }
+
+                        }
+
+                    linewidth = 0;
+                    y += linefontheight + linemarginy * 2;
+
+                    line.Clear();
+
+                    maxlines--;
+
+                }
 
             }
-
-            if (flowDirection == FlowDirection.Unknown || flowDirection == FlowDirection.LeftToRight)
-                return new SKRect(rect.Left, rect.Top, rect.Left + maxlinewidth + floatroundingmargin, y);
-            else
-                return new SKRect(rect.Right - maxlinewidth - floatroundingmargin, rect.Top, rect.Right, y);
-
-            void LayoutLine()
+            finally
             {
-
-                if (canvas != null)
-
-                    if (flowDirection == FlowDirection.LeftToRight)
-                    {
-                        var x = rect.Left;
-                        if (LineAlignment == LineAlignment.Far) x += rect.Width - linewidth;
-                        if (LineAlignment == LineAlignment.Center) x += (rect.Width - linewidth) / 2;
-                        foreach (var chunk in line)
-                        {
-
-                            if (PixelRounding)
-                                x = (float)Math.Round(x);
-
-                            var span = chunk.span;
-                            var spanwidth = chunk.wordspan.width;
-
-                            // draw the span
-                            span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, false);
-
-#if DEBUGCONTAINER
-                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
-                            using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
-                                canvas.DrawRect(paintrect, borderpaint);
-#endif
-
-                            x += spanwidth;
-
-                        }
-                    }
-                    else
-                    {
-
-                        var x = rect.Right;
-                        if (LineAlignment == LineAlignment.Far) x -= rect.Width - linewidth;
-                        if (LineAlignment == LineAlignment.Center) x -= (rect.Width - linewidth) / 2;
-                        foreach (var chunk in line)
-                        {
-
-                            var span = chunk.span;
-                            var spanwidth = chunk.wordspan.width;
-
-                            if (PixelRounding)
-                                x = (float)Math.Round(x);
-
-                            x -= spanwidth;
-
-                            // draw the span
-                            span.DrawMeasuredSpan(canvas, x, y, linefontheight, linemarginy, chunk.wordspan, true);
-
-#if DEBUGCONTAINER
-                            var paintrect = new SKRect(x, y - linefontheight - linemarginy, x + spanwidth, y + linemarginy);
-                            using (var borderpaint = new SKPaint() { Color = SKColors.Orange.WithAlpha(64), IsStroke = true })
-                                canvas.DrawRect(paintrect, borderpaint);
-#endif
-
-                        }
-
-                    }
-
-                linewidth = 0;
-                y += linefontheight + linemarginy * 2;
-
-                line.Clear();
-
-                maxlines--;
-
+                LayoutPool.Return(line);
+                LinePool.Return(childlines);
             }
+
         }
 
     }
