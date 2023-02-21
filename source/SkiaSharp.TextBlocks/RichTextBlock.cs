@@ -170,6 +170,8 @@ namespace SkiaSharp.TextBlocks
 
                             }
 
+                            childlines.Clear();
+
                             if (maxlines <= 0) break;
 
                         }
