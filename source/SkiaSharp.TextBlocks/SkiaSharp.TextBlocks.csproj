@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Wouter Steenbergen</Authors>
     <Company>My Daily Bits LLC</Company>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Description>SkiaSharp.TextBlocks adds text block and rich text layout to SkiaSharp. Tested on iOS, Android, and Windows, and likely to perform on other SkiaSharp supported platforms.</Description>
-    <Copyright>2020-2023 Wouter Steenbergen</Copyright>
+    <Copyright>2020-2024 Wouter Steenbergen</Copyright>
     <PackageLicenseFile></PackageLicenseFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/wouterst79/SkiaSharp.TextBlocks</PackageProjectUrl>
